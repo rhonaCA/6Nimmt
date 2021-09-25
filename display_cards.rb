@@ -1,21 +1,19 @@
 require 'json'
 require_relative 'player_cards'
 
-round = 5
+player_collected_cards = []
+
+round = 10
 until round == 0
   # Display init cards
   init_cards_j = JSON.load_file('init_cards.json', symbolize_names: true)
 
-  ### NEEDS TO AMEND vvvvv
-
   ## Iterate init_cards_j to print out each init card
-  # Iterate to get each init row
   init_cards_j.each do |hash|
     hash.each_value do |values|
-      puts values.map { |c| "Card #{c[:num]}: #{c[:head]} head" }.join(' / ')
+      puts values.map { |c| "Card #{c[:num]}: #{c[:head]} head" }.join(' | ')
     end
   end
-
 
   # Find the min in the arr
   def find_min(arr)
@@ -38,7 +36,7 @@ until round == 0
   puts "Card you want to place outside? "
   card_dispose = gets.chomp.to_i
 
-  ### NEEDS TO ADD LOGIC ON WHIC ROW SHOULD THE CARD GOES  vvvvvvv
+
 
     # Find the key-value pair that match player_input
     # Then add that into init pile
@@ -56,15 +54,25 @@ until round == 0
               end
           end
           temp = find_min(arr)
-          if card[:num]== card_dispose
+          if card[:num] == card_dispose
+            # Keep each init row can only have max 5 cards
+            if init_cards_j[temp[:index]].values[0].length < 5
               init_cards_j[temp[:index]].values[0] << {num: card[:num], head: card[:head]}
-          end
+            else
+              # If the init row has 5 cards already, the 6th card will become the first card of that row and those 5 cards will be added into player_collected cards
+              init_cards_j[temp[:index]].values[0] << {num: card[:num], head: card[:head]}
+              *remaining, last = init_cards_j[temp[:index]].values[0]
+              player_collected_cards << remaining
+              init_cards_j[temp[:index]].values[0].shift(5)
+            end
+            p player_collected_cards
+        end
           player_cards_j.delete_if { |h| h[:num] == card_dispose }
           round -= 1
       end
   end
 
-   ### NEEDS TO ADD LOGIC ON WHIC ROW SHOULD THE CARD GOES  ^^^^^^
+
 
 
   # Update json file will the updated player_cards_j
