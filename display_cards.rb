@@ -6,13 +6,20 @@ until round == 0
   # Display init cards
   init_cards_j = JSON.load_file('init_cards.json', symbolize_names: true)
 
-  # Iterate init_cards_j to print out each init card
-  init_cards_j.each do |card|
-    if card[:head] == 1
-      print "Card #{card[:num]}: #{card[:head]} kettle head. "
-    else
-      print "Card #{card[:num]}: #{card[:head]} kettle heads. "
+  ### NEEDS TO AMEND vvvvv
+
+  ## Iterate init_cards_j to print out each init card
+  # Iterate to get each init row
+  init_cards_j.each do |hash|
+    hash.each_value do |values|
+      puts values.map { |c| "Card #{c[:num]}: #{c[:head]} head" }.join(' / ')
     end
+  end
+
+
+  # Find the min in the arr
+  def find_min(arr)
+    arr.min_by {|x| x[:diff]} 
   end
 
   # Display player's cards
@@ -31,16 +38,34 @@ until round == 0
   puts "Card you want to place outside? "
   card_dispose = gets.chomp.to_i
 
-  # Find the key-value pair that match player_input
-  # Then add that into init pile
-  player_cards_j.each_with_index do |card, index|
-    init_cards_j << player_cards_j[index] if card[:num] == card_dispose
+  ### NEEDS TO ADD LOGIC ON WHIC ROW SHOULD THE CARD GOES  vvvvvvv
+
+    # Find the key-value pair that match player_input
+    # Then add that into init pile
+    player_cards_j.each_with_index do |card, index|
+      arr = []
+      if card[:num] == card_dispose
+          init_cards_j.each_index do |index|
+              # x represent each init row without :init
+              x = init_cards_j[index].values[0]
+              # p x[x.length-1][:num] # value of the last key-value of each init
+              # Compare num to the last key-value of each init
+              if card_dispose > x[x.length-1][:num]
+                  # Add the num and difference into an array 
+                  arr.push(num: x[x.length-1][:num], head: x[x.length-1][:head], diff: card_dispose - x[x.length-1][:num], index: index)
+              end
+          end
+          temp = find_min(arr)
+          if card[:num]== card_dispose
+              init_cards_j[temp[:index]].values[0] << {num: card[:num], head: card[:head]}
+          end
+          player_cards_j.delete_if { |h| h[:num] == card_dispose }
+          round -= 1
+      end
   end
 
-  # And delete from player_cards_j pile
-  player_cards_j.delete_if do |card|
-    card[:num] == card_dispose
-  end
+   ### NEEDS TO ADD LOGIC ON WHIC ROW SHOULD THE CARD GOES  ^^^^^^
+
 
   # Update json file will the updated player_cards_j
   File.open('player_cards.json', 'w') do |f|
