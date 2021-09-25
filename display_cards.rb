@@ -3,73 +3,101 @@ require_relative 'player_cards'
 
 player_collected_cards = []
 
-round = 10
-until round == 0
-  # Display init cards
-  init_cards_j = JSON.load_file('init_cards.json', symbolize_names: true)
-
-  ## Iterate init_cards_j to print out each init card
-  init_cards_j.each do |hash|
+# Iterate init_cards to print out each init card
+def print_init_cards(arr)
+  arr.each do |hash|
     hash.each_value do |values|
       puts values.map { |c| "Card #{c[:num]}: #{c[:head]} head" }.join(' | ')
     end
   end
+end
 
-  # Find the min in the arr
-  def find_min(arr)
-    arr.min_by {|x| x[:diff]} 
-  end
-
-  # Display player's cards
-  player_cards_j = JSON.load_file('player_cards.json', symbolize_names: true)
-
-  puts "You have - "
-  # Iterate player_cards_j to print out each player cards
-  player_cards_j.each do |card|
+# Iterate player_cards_j to print out each player cards
+def print_player_cards(arr)
+  arr.each do |card|
     if card[:head] == 1
       puts "Card #{card[:num]}: #{card[:head]} kettle head."
     else
       puts "Card #{card[:num]}: #{card[:head]} kettle heads."
     end
   end
-  # Player select a card to place outside
+end
+
+# Find the min in the arr
+def find_min(arr)
+  arr.min_by {|x| x[:diff]} 
+end
+
+# If the init row has 5 cards already, the 6th card will become the first card of that row and those 5 cards will be added into player_collected cards
+def max_5_on_each_init(arr, arr2, item)
+  if arr.length < 5
+    arr << {num: item[:num], head: item[:head]}
+  else
+    arr << {num: item[:num], head: item[:head]}
+    *remaining, last = arr
+    arr2 << remaining
+    arr.shift(5)
+  end
+end
+
+# Delete card that has been choosen to place outside
+def delete_card(arr, num)
+  arr.delete_if { |h| h[:num] == num }
+end
+
+# Tell player how many heads they currently have
+def display_total_heads(arr)
+  num = arr.flatten.inject(0) { |sum, h| sum + h[:head]}
+  if num > 1
+    puts "You currently have #{num} heads in total."
+    else
+    puts "You currently have #{num} head in total."
+  end
+end
+
+round = 10
+until round == 0
+  # Display init cards
+  init_cards_j = JSON.load_file('init_cards.json', symbolize_names: true)
+
+  # Display player's cards
+  player_cards_j = JSON.load_file('player_cards.json', symbolize_names: true)
+
+  print_init_cards(init_cards_j)
+
+  puts "You have - "
+
+  print_player_cards(player_cards_j)
+  display_total_heads(player_collected_cards)
+
+  # Prompt player select a card to place outside
   puts "Card you want to place outside? "
   card_dispose = gets.chomp.to_i
 
 
 
-    # Find the key-value pair that match player_input
-    # Then add that into init pile
-    player_cards_j.each_with_index do |card, index|
-      arr = []
-      if card[:num] == card_dispose
-          init_cards_j.each_index do |index|
-              # x represent each init row without :init
-              x = init_cards_j[index].values[0]
-              # p x[x.length-1][:num] # value of the last key-value of each init
-              # Compare num to the last key-value of each init
-              if card_dispose > x[x.length-1][:num]
-                  # Add the num and difference into an array 
-                  arr.push(num: x[x.length-1][:num], head: x[x.length-1][:head], diff: card_dispose - x[x.length-1][:num], index: index)
-              end
-          end
-          temp = find_min(arr)
-          if card[:num] == card_dispose
-            # Keep each init row can only have max 5 cards
-            if init_cards_j[temp[:index]].values[0].length < 5
-              init_cards_j[temp[:index]].values[0] << {num: card[:num], head: card[:head]}
-            else
-              # If the init row has 5 cards already, the 6th card will become the first card of that row and those 5 cards will be added into player_collected cards
-              init_cards_j[temp[:index]].values[0] << {num: card[:num], head: card[:head]}
-              *remaining, last = init_cards_j[temp[:index]].values[0]
-              player_collected_cards << remaining
-              init_cards_j[temp[:index]].values[0].shift(5)
+  # Find the key-value pair that match player_input
+  # Then add that into init pile
+  player_cards_j.each_with_index do |card, index|
+    arr = []
+    if card[:num] == card_dispose
+        init_cards_j.each_index do |index|
+            # x represent each init row without :init
+            x = init_cards_j[index].values[0]
+            # p x[x.length-1][:num] # value of the last key-value of each init
+            # Compare num to the last key-value of each init
+            if card_dispose > x[x.length-1][:num]
+                # Add the num and difference into an array 
+                arr.push(num: x[x.length-1][:num], head: x[x.length-1][:head], diff: card_dispose - x[x.length-1][:num], index: index)
             end
-            p player_collected_cards
         end
-          player_cards_j.delete_if { |h| h[:num] == card_dispose }
-          round -= 1
-      end
+        temp = find_min(arr)
+        if card[:num] == card_dispose
+          max_5_on_each_init(init_cards_j[temp[:index]].values[0], player_collected_cards, card)
+        end
+        delete_card(player_cards_j, card_dispose)
+        round -= 1
+    end
   end
 
 
