@@ -3,112 +3,130 @@ require_relative 'player_cards'
 
 player_collected_cards = []
 
-# Iterate init_cards to print out each init card
 def print_init_cards(arr)
-  arr.each do |hash|
-    hash.each_value do |values|
-      puts values.map { |c| "Card #{c[:num]}: #{c[:head]} head" }.join(' | ')
+    arr.each do |hash|
+        hash.each_value do |values|
+            puts values.map { |c| "Card #{c[:num]}: #{c[:head]} head" }.join(' | ')
+        end
     end
-  end
 end
-
+  
 # Iterate player_cards_j to print out each player cards
 def print_player_cards(arr)
-  arr.each do |card|
-    if card[:head] == 1
-      puts "Card #{card[:num]}: #{card[:head]} kettle head."
-    else
-      puts "Card #{card[:num]}: #{card[:head]} kettle heads."
+    arr.each do |card|
+        if card[:head] == 1
+        puts "Card #{card[:num]}: #{card[:head]} kettle head."
+        else
+        puts "Card #{card[:num]}: #{card[:head]} kettle heads."
+        end
     end
-  end
+end
+
+# init_cards / player_cards / card
+def max_5_on_each_init(arr2, arr3, item)
+    if arr2.length < 5
+        arr2 << {num: item[:num], head: item[:head]}
+    else
+        arr2 << {num: item[:num], head: item[:head]}
+        *remaining, last = arr2
+        arr3 << remaining
+        arr2.shift(5)
+    end
 end
 
 # Find the min in the arr
 def find_min(arr)
-  arr.min_by {|x| x[:diff]} 
+    arr.min_by {|x| x[:diff]} 
 end
 
-# If the init row has 5 cards already, the 6th card will become the first card of that row and those 5 cards will be added into player_collected cards
-def max_5_on_each_init(arr, arr2, item)
-  if arr.length < 5
-    arr << {num: item[:num], head: item[:head]}
-  else
-    arr << {num: item[:num], head: item[:head]}
-    *remaining, last = arr
-    arr2 << remaining
-    arr.shift(5)
-  end
-end
-
-# Delete card that has been choosen to place outside
+# player_cards /  num of card_dispose
 def delete_card(arr, num)
-  arr.delete_if { |h| h[:num] == num }
+    arr.delete_if { |h| h[:num] == num }
 end
 
 # Tell player how many heads they currently have
 def display_total_heads(arr)
-  num = arr.flatten.inject(0) { |sum, h| sum + h[:head]}
-  if num > 1
-    puts "You currently have #{num} heads in total."
-    else
-    puts "You currently have #{num} head in total."
-  end
+    num = arr.flatten.inject(0) { |sum, h| sum + h[:head]}
+    if num > 1
+      puts "You currently have #{num} heads in total."
+      else
+      puts "You currently have #{num} head in total."
+    end
 end
 
-round = 10
-until round == 0
-  # Display init cards
-  init_cards_j = JSON.load_file('init_cards.json', symbolize_names: true)
 
-  # Display player's cards
-  player_cards_j = JSON.load_file('player_cards.json', symbolize_names: true)
-
-  print_init_cards(init_cards_j)
-
-  puts "You have - "
-
-  print_player_cards(player_cards_j)
-  display_total_heads(player_collected_cards)
-
-  # Prompt player select a card to place outside
-  puts "Card you want to place outside? "
-  card_dispose = gets.chomp.to_i
-
-
-
-  # Find the key-value pair that match player_input
-  # Then add that into init pile
-  player_cards_j.each_with_index do |card, index|
-    arr = []
-    if card[:num] == card_dispose
-        init_cards_j.each_index do |index|
-            # x represent each init row without :init
-            x = init_cards_j[index].values[0]
-            # p x[x.length-1][:num] # value of the last key-value of each init
-            # Compare num to the last key-value of each init
-            if card_dispose > x[x.length-1][:num]
-                # Add the num and difference into an array 
-                arr.push(num: x[x.length-1][:num], head: x[x.length-1][:head], diff: card_dispose - x[x.length-1][:num], index: index)
+# player_cards / init_cards / player_cards_collected / num of card_dispose
+def add_card_to_init(arr, arr2, arr3, num)  
+    arr.each do |card|
+        temp_arr = []
+        # Iterate player cards to compare num to [:num]
+        if num == card[:num]
+            # Iterate init cards to check if num > any init cards'num, index = index of each init row in init_cards
+            count = 0
+            arr2.each_with_index do |row, index|
+                if num >= row.values[0].last[:num]
+                    count += 1
+                end      
             end
+            case count
+            when 0 
+                puts "Which row you want to put instead? "
+                init_row = gets.chomp.to_i
+                arr2[init_row-1].values[0] << {num: card[:num], head: card[:head]}
+                *first, last = arr2[init_row-1].values[0]
+                arr3 << first
+                arr2[init_row-1].values[0].shift(arr2[init_row-1].values[0].length - 1)
+            when 1..5
+                arr2.each_with_index do |row, index|
+                    # Add the num and difference into an array 
+                    if num > row.values[0].last[:num]
+                        temp_arr.push(num: row.values[0].last[:num], head: row.values[0].last[:head], diff: num - row.values[0].last[:num], index: index)
+                    end
+                end
+                min = find_min(temp_arr)
+                # init_row that we want to add the new card / player_collected_cards / card
+                max_5_on_each_init(arr2[min[:index]].values[0], arr3, card)
+            end
+            # player_cards / num of dispose card
+            delete_card(arr, num)
         end
-        temp = find_min(arr)
-        if card[:num] == card_dispose
-          max_5_on_each_init(init_cards_j[temp[:index]].values[0], player_collected_cards, card)
-        end
-        delete_card(player_cards_j, card_dispose)
-        round -= 1
     end
-  end
+end
+
+# Update json file will the updated player_cards_j
+def save(jsonname, var)
+  File.open(jsonname, 'w') do |f|
+      f.puts(var.to_json)
+    end
+end
+
+round = 0
+while round == 0
+# Display init cards
+init_cards_j = JSON.load_file('init_cards.json', symbolize_names: true)
+
+# Display player's cards
+player_cards_j = JSON.load_file('player_cards.json', symbolize_names: true)
+
+print_init_cards(init_cards_j)
 
 
+puts "You have - "
+
+print_player_cards(player_cards_j)
+display_total_heads(player_collected_cards)
 
 
-  # Update json file will the updated player_cards_j
-  File.open('player_cards.json', 'w') do |f|
-    f.puts(player_cards_j.to_json)
-  end
-  # Update json file will the updated init_cards_j
-  File.open('init_cards.json', 'w') do |f|
-    f.puts(init_cards_j.to_json)
-  end
+# Prompt player select a card to place outside
+puts "Card you want to place outside? "
+card_dispose = gets.chomp.to_i
+
+add_card_to_init(player_cards_j, init_cards_j, player_collected_cards, card_dispose)  
+# add_card_to_init(arr, arr2, arr3, card_dispose)  
+
+# Update json file will the updated player_cards_j
+save('player_cards.json', player_cards_j)
+
+# Update json file will the updated init_cards_j
+save('init_cards.json', init_cards_j)
 end
