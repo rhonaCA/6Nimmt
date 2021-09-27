@@ -57,6 +57,25 @@ def display_total_heads(arr, name)
     end
 end
 
+# player_cards or npc_cards / init_cards / player or npc cards collected / card
+def choose_init_row(arr2, arr3, init_row, card)
+    arr2[init_row-1].values[0] << {num: card[:num], head: card[:head]}
+    *first, last = arr2[init_row-1].values[0]
+    arr3 << first
+    arr2[init_row-1].values[0].shift(arr2[init_row-1].values[0].length - 1)
+end
+
+# Iterate init_row to get the total heads of each row
+def npc_choose_init_row(arr3)
+    total_heads_on_each_row = []
+    # iterate init_row 
+    arr3.each_with_index do |row, index|
+        # Get the total heads of each init row and add it total_heads_on_each_init_row with total num of heads and index of that init_row
+        total_heads_on_each_row << {total: row.values[0].sum { |h| h[:head] }, index: index}
+    end
+    # Find the min total and get the index of that
+    return total_heads_on_each_row.min_by{ |k| k[:total]}[:index]
+end
 
 # player_cards / init_cards / player_cards_collected / num of card_dispose
 def add_card_to_init(arr, arr2, arr3, num, name)  
@@ -64,21 +83,23 @@ def add_card_to_init(arr, arr2, arr3, num, name)
         temp_arr = []
         # Iterate player cards to compare num to [:num]
         if num == card[:num]
-            # Iterate init cards to check if num > any init cards'num, index = index of each init row in init_cards
             count = 0
+            # Iterate init cards to check if num > any init cards'num, index = index of each init row in init_cards
             arr2.each_with_index do |row, index|
                 if num >= row.values[0].last[:num]
                     count += 1
                 end      
             end
             case count
-            when 0 
-                puts "#{name} Which row you want to put instead? "
-                init_row = gets.chomp.to_i
-                arr2[init_row-1].values[0] << {num: card[:num], head: card[:head]}
-                *first, last = arr2[init_row-1].values[0]
-                arr3 << first
-                arr2[init_row-1].values[0].shift(arr2[init_row-1].values[0].length - 1)
+            when 0
+                if name != 'NPC'
+                    puts "#{name} Which row you want to put instead? "
+                    init_row = gets.chomp.to_i
+                    choose_init_row(arr2, arr3, init_row, card)
+                else
+                    init_row = npc_choose_init_row(arr2) + 1
+                    choose_init_row(arr2, arr3, init_row, card)
+                end
             when 1..5
                 arr2.each_with_index do |row, index|
                     # Add the num and difference into an array 
