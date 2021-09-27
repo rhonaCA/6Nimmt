@@ -1,34 +1,71 @@
 require 'json'
 require_relative 'player_cards'
 
+# General Methods ------------
 
-
-# ---- Methods for players ---- #
-def print_init_cards(arr)
+# Print out init_rows' cards
+def print_init_cards(arr) #init_cards_j
     arr.each do |hash|
+        # Iterate each init row and join by |
         hash.each_value do |values|
             puts values.map { |c| "Card #{c[:num]}: #{c[:head]} head" }.join(' | ')
             puts " "
         end
     end
 end
-  
-# Iterate player_cards_j to print out each player cards
-def print_player_cards(arr)
+
+# Add disposed card to one of the init rows
+# player_cards or npc_cards / init_cards / player_cards_collected or npc_cards_collected/ num of card_dispose
+def add_card_to_init(arr, arr2, arr3, num, name)  
     arr.each do |card|
-        if card[:head] == 1
-        puts "Card #{card[:num]}: #{card[:head]} kettle head."
-        else
-        puts "Card #{card[:num]}: #{card[:head]} kettle heads."
+        temp_arr = []
+        # Iterate player cards to compare num to [:num]
+        if num == card[:num]
+            count = 0
+            # Iterate init cards to check if num > any init cards'num, index = index of each init row in init_cards
+            arr2.each_with_index do |row, index|
+                if num >= row.values[0].last[:num]
+                    count += 1
+                end      
+            end
+            case count
+            # When num is not larger than any init row's last card
+            when 0
+                # If it's player, prompt player to choose which row they want to put the card
+                if name != 'NPC'
+                    puts "#{name} Which row you want to put instead? "
+                    init_row = gets.chomp.to_i
+                    choose_init_row(arr2, arr3, init_row, card)
+                # If it's npc, use method to calcute which row they will put the card
+                else
+                    init_row = npc_choose_init_row(arr2) + 1
+                    choose_init_row(arr2, arr3, init_row, card)
+                end
+            # When num is larger than any init row's last card
+            when 1..5
+                arr2.each_with_index do |row, index|
+                    # Add the num and difference into an array 
+                    if num > row.values[0].last[:num]
+                        temp_arr.push(num: row.values[0].last[:num], head: row.values[0].last[:head], diff: num - row.values[0].last[:num], index: index)
+                    end
+                end
+                min = find_min(temp_arr)
+                max_5_on_each_init(arr2[min[:index]].values[0], arr3, card)
+            end
+            # player_cards or npc_cards / num of dispose card
+            delete_card(arr, num)
         end
     end
 end
 
-# init_cards / player_cards / card
-def max_5_on_each_init(arr2, arr3, item)
+
+# Check if the selected init row has 5 cards already
+def max_5_on_each_init(arr2, arr3, item) # init_cards / player_cards_collected OR npc_cards_collected / card
+    # If less than 5 cards, add the disposed card to that row
     if arr2.length < 5
         arr2 << {num: item[:num], head: item[:head]}
     else
+        # If more than 5 cards, add the disposed card to that row and move the first 5 cards to cards_collected pile
         arr2 << {num: item[:num], head: item[:head]}
         *remaining, last = arr2
         arr3 << remaining
@@ -41,14 +78,13 @@ def find_min(arr)
     arr.min_by {|x| x[:diff]} 
 end
 
-# player_cards /  num of card_dispose
-def delete_card(arr, num)
+# Remove disposed card from player_cards or npc_cards pile
+def delete_card(arr, num) # player_cards or npc_cards /  num of disposed card
     arr.delete_if { |h| h[:num] == num }
 end
 
-# Tell player how many heads they currently have
-# player_collected_cards
-def display_total_heads(arr, name)
+# Display how many heads player and npc currently have
+def display_total_heads(arr, name) # player_collected_cards or npc_collected_cards / player or npc
     num = arr.flatten.inject(0) { |sum, h| sum + h[:head]}
     if num > 1
       puts "#{name} has #{num} heads in total."
@@ -57,8 +93,13 @@ def display_total_heads(arr, name)
     end
 end
 
-# player_collected_cards / npc_collected_cards
-def who_wins_each_round(arr, arr2, winning)
+# Display which card player and npc have disposed
+def display_disposed_card(name, num)
+    puts "#{name} has put card #{num}"
+end
+
+# Find out who wins on each round
+def who_wins_each_round(arr, arr2, winning) # player_collected_cards / npc_collected_cards / winning array
     player_total = arr.flatten.inject(0) { |sum, h| sum + h[:head]}
     npc_total = arr2.flatten.inject(0) { |sum, h| sum + h[:head]}
 
@@ -73,26 +114,39 @@ def who_wins_each_round(arr, arr2, winning)
     end
 end
 
-# Who wins?!
-# winning
-def who_is_final_winner(arr)
+# Find out who wins after 3 rounds
+def who_is_final_winner(arr) # winning array
     puts "Winner is #{arr.tally.max_by{|k,v| v}[0].capitalize}! Congratulations!"      
 end
 
+# Methods for player -----------
 
-# player_cards or npc_cards / init_cards / player or npc cards collected / card
-def choose_init_row(arr2, arr3, init_row, card)
+# Iterate player_cards_j to print out each player cards
+def print_player_cards(arr)
+    arr.each do |card|
+        if card[:head] == 1
+        puts "Card #{card[:num]}: #{card[:head]} kettle head."
+        else
+        puts "Card #{card[:num]}: #{card[:head]} kettle heads."
+        end
+    end
+end
+
+# Player will input a num (1-4) to indicate which row they want to put the card
+def choose_init_row(arr2, arr3, init_row, card) # player_cards / init_cards / player cards collected / card
     arr2[init_row-1].values[0] << {num: card[:num], head: card[:head]}
     *first, last = arr2[init_row-1].values[0]
     arr3 << first
     arr2[init_row-1].values[0].shift(arr2[init_row-1].values[0].length - 1)
 end
 
-# Iterate init_row to get the total heads of each row
-def npc_choose_init_row(arr3)
+# Methods for npc -----------
+
+# Find out which init row npc will put their card when their disposed card is smaller than the cards outside
+def npc_choose_init_row(arr2) # init_row
     total_heads_on_each_row = []
     # iterate init_row 
-    arr3.each_with_index do |row, index|
+    arr2.each_with_index do |row, index|
         # Get the total heads of each init row and add it total_heads_on_each_init_row with total num of heads and index of that init_row
         total_heads_on_each_row << {total: row.values[0].sum { |h| h[:head] }, index: index}
     end
@@ -100,76 +154,15 @@ def npc_choose_init_row(arr3)
     return total_heads_on_each_row.min_by{ |k| k[:total]}[:index]
 end
 
-# player_cards / init_cards / player_cards_collected / num of card_dispose
-def add_card_to_init(arr, arr2, arr3, num, name)  
-    arr.each do |card|
-        temp_arr = []
-        # Iterate player cards to compare num to [:num]
-        if num == card[:num]
-            count = 0
-            # Iterate init cards to check if num > any init cards'num, index = index of each init row in init_cards
-            arr2.each_with_index do |row, index|
-                if num >= row.values[0].last[:num]
-                    count += 1
-                end      
-            end
-            case count
-            when 0
-                if name != 'NPC'
-                    puts "#{name} Which row you want to put instead? "
-                    init_row = gets.chomp.to_i
-                    choose_init_row(arr2, arr3, init_row, card)
-                else
-                    init_row = npc_choose_init_row(arr2) + 1
-                    choose_init_row(arr2, arr3, init_row, card)
-                end
-            when 1..5
-                arr2.each_with_index do |row, index|
-                    # Add the num and difference into an array 
-                    if num > row.values[0].last[:num]
-                        temp_arr.push(num: row.values[0].last[:num], head: row.values[0].last[:head], diff: num - row.values[0].last[:num], index: index)
-                    end
-                end
-                min = find_min(temp_arr)
-                # init_row that we want to add the new card / player_collected_cards / card
-                max_5_on_each_init(arr2[min[:index]].values[0], arr3, card)
-            end
-            # player_cards / num of dispose card
-            delete_card(arr, num)
-        end
-    end
+# Helper method of - NPC picks a card
+# Push a random from each row to npc_will_choose_card arr
+def add_random_card(arr, arr2)
+    arr << arr2.sample
 end
 
-# Update json file will the updated player_cards_j
-def save(jsonname, var)
-    File.open(jsonname, 'w') do |f|
-        f.puts(var.to_json)
-    end
-end
-
-def display_disposed_card(name, num)
-    puts "#{name} has put card #{num}"
-end
-
-# ---- Methods just for NPC ----#
-# Check if there is any nil value on npc_will_choose arr
-# npc_will_choose / index
-def check_if_nil(arr, num)
-    if arr[num] == nil
-        if arr[num-1] == nil
-            arr[num-2][:npc_card]
-        else
-            arr[num-1][:npc_card]
-        end
-    else
-        arr[num][:npc_card]
-    end
-end
-
-# Get a card base on possibility
-# 5% - netagive_arr
-# 60% - 1-2- arr
-# 35% - over-20-arr
+# Helper method of - NPC picks a card to dispose
+# Card will be picked base on probability
+# 5% - Difference is netagive, 60% - Difference is between 1-20, 35% - Difference is over 20
 def get_num(arr)
     case rand(100) + 1
     when 1..5
@@ -181,13 +174,7 @@ def get_num(arr)
     end
 end
 
-
-    
-# Push a random from each row to npc_will_choose_card arr
-def add_random_card(arr, arr2)
-    arr << arr2.sample
-end
-
+# NPC picks a card to dispose
 def npc_card_dispose(npc_cards, init_cards)
     temp_npc = []
 
@@ -203,6 +190,7 @@ def npc_card_dispose(npc_cards, init_cards)
     arr_over_20 = []
     npc_will_choose_card = []
 
+    # Iterate through array and categorize the cards
     temp_npc.each do |card|
         if card[:diff] < 0
             negative_arr << card
@@ -220,6 +208,19 @@ def npc_card_dispose(npc_cards, init_cards)
     return get_num(npc_will_choose_card)
 end
 
+# Check if there is any nil value on npc_will_choose arr
+# npc_will_choose / index
+def check_if_nil(arr, num)
+    if arr[num] == nil
+        if arr[num-1] == nil
+            arr[num-2][:npc_card]
+        else
+            arr[num-1][:npc_card]
+        end
+    else
+        arr[num][:npc_card]
+    end
+end
 
 total_round = 0
 winning = []
@@ -250,25 +251,24 @@ until total_round == 3
 
     player_collected_cards = []
     npc_collected_cards = []
-    
+
     round = 10
     until round == 0        
+        print_init_cards(init_cards_j)
+        puts "--------------------------------------------------------------------------"
+        puts "You have - "
+        puts " "
+        print_player_cards(player_cards_j)
+        puts " "
+        puts "--------------------------------------------------------------------------"
+        display_total_heads(player_collected_cards, 'Player')
+        puts " "
+        display_total_heads(npc_collected_cards, 'NPC')
+        puts "--------------------------------------------------------------------------"
 
-    print_init_cards(init_cards_j)
-    puts "--------------------------------------------------------------------------"
-    puts "You have - "
-    puts " "
-    print_player_cards(player_cards_j)
-    puts " "
-    puts "--------------------------------------------------------------------------"
-    display_total_heads(player_collected_cards, 'Player')
-    puts " "
-    display_total_heads(npc_collected_cards, 'NPC')
-    puts "--------------------------------------------------------------------------"
-
-    # Prompt player select a card to place outside
-    puts "Player: Card you want to place outside? "
-    card_dispose = gets.chomp.to_i
+        # Prompt player select a card to place outside
+        puts "Player: Card you want to place outside? "
+        card_dispose = gets.chomp.to_i
 
         # Npc select a card to place outside
         card_dispose_npc = npc_card_dispose(npc_cards_j, init_cards_j)
@@ -290,17 +290,8 @@ until total_round == 3
             add_card_to_init(npc_cards_j, init_cards_j, npc_collected_cards, card_dispose_npc, 'NPC') 
             add_card_to_init(player_cards_j, init_cards_j, player_collected_cards, card_dispose, 'Player')  
         end
-
-        # # Update json file will the updated player_cards_j
-        # save('player_cards.json', player_cards_j)
-        # # Update json file will the updated init_cards_j
-        # save('init_cards.json', init_cards_j)
-        # # Update json file will the updated init_cards_j
-        # save('npc_cards.json', npc_cards_j)
-        
         round -= 1
     end
-
     print_init_cards(init_cards_j)
     display_total_heads(player_collected_cards, 'Player')
     display_total_heads(npc_collected_cards, 'NPC')
@@ -314,12 +305,6 @@ until total_round == 3
     puts "____________________________________________ "
     puts " "
     puts " "
-    
 end
 puts "Game is finished"
 who_is_final_winner(winning)
-
-
-
-
-
