@@ -4,6 +4,7 @@ require_relative 'player_cards'
 player_collected_cards = []
 npc_collected_cards = []
 
+# ---- Methods for players ---- #
 def print_init_cards(arr)
     arr.each do |hash|
         hash.each_value do |values|
@@ -58,7 +59,7 @@ end
 
 
 # player_cards / init_cards / player_cards_collected / num of card_dispose
-def add_card_to_init(arr, arr2, arr3, num)  
+def add_card_to_init(arr, arr2, arr3, num, name)  
     arr.each do |card|
         temp_arr = []
         # Iterate player cards to compare num to [:num]
@@ -72,7 +73,7 @@ def add_card_to_init(arr, arr2, arr3, num)
             end
             case count
             when 0 
-                puts "Which row you want to put instead? "
+                puts "#{name} Which row you want to put instead? "
                 init_row = gets.chomp.to_i
                 arr2[init_row-1].values[0] << {num: card[:num], head: card[:head]}
                 *first, last = arr2[init_row-1].values[0]
@@ -100,6 +101,79 @@ def save(jsonname, var)
     File.open(jsonname, 'w') do |f|
         f.puts(var.to_json)
     end
+end
+
+def display_disposed_card(name, num)
+    puts "#{name} has put card #{num}"
+end
+
+# ---- Methods just for NPC ----#
+# Check if there is any nil value on npc_will_choose arr
+# npc_will_choose / index
+def check_if_nil(arr, num)
+    if arr[num] == nil
+        if arr[num-1] == nil
+            arr[num-2][:npc_card]
+        else
+            arr[num-1][:npc_card]
+        end
+    else
+        arr[num][:npc_card]
+    end
+end
+
+# Get a card base on possibility
+# 5% - netagive_arr
+# 60% - 1-2- arr
+# 35% - over-20-arr
+def get_num(arr)
+    case rand(100) + 1
+    when 1..5
+        arr[0][:npc_card]
+    when 6..65
+        check_if_nil(arr,1)
+    when 66..100
+        check_if_nil(arr,2)
+    end
+end
+
+
+    
+# Push a random from each row to npc_will_choose_card arr
+def add_random_card(arr, arr2)
+    arr << arr2.sample
+end
+
+def npc_card_dispose(npc_cards, init_cards)
+    temp_npc = []
+
+    npc_cards.each do |card|
+        init_cards.each_with_index do |row, index|
+            # Calculate difference between each npc_card to each init_card
+            temp_npc.push(init_card: row.values[0].last[:num], npc_card: card[:num], diff: card[:num] - row.values[0].last[:num])
+        end
+    end
+
+    negative_arr = []
+    arr_1_20 = []
+    arr_over_20 = []
+    npc_will_choose_card = []
+
+    temp_npc.each do |card|
+        if card[:diff] < 0
+            negative_arr << card
+        elsif card[:diff] > 0 && card[:diff] <= 20
+            arr_1_20 << card
+        else
+            arr_over_20 << card
+        end
+    end
+
+    add_random_card(npc_will_choose_card, negative_arr)
+    add_random_card(npc_will_choose_card, arr_1_20)
+    add_random_card(npc_will_choose_card, arr_over_20)
+
+    return get_num(npc_will_choose_card)
 end
 
 # --------------------------------------------------- #
@@ -130,16 +204,20 @@ until round == 0
   puts "Player: Card you want to place outside? "
   card_dispose = gets.chomp.to_i
 
-    # Prompt npc select a card to place outside
-    puts "NPC: Card you want to place outside? "
-    card_dispose_npc = gets.chomp.to_i
+    # Npc select a card to place outside
+    card_dispose_npc = npc_card_dispose(npc_cards_j, init_cards_j)
+
+    display_disposed_card('Player', card_dispose)
+    display_disposed_card('NPC', card_dispose_npc)
+    
+
         
     if card_dispose < card_dispose_npc
-        add_card_to_init(player_cards_j, init_cards_j, player_collected_cards, card_dispose)  
-        add_card_to_init(npc_cards_j, init_cards_j, npc_collected_cards, card_dispose_npc)  
+        add_card_to_init(player_cards_j, init_cards_j, player_collected_cards, card_dispose, 'Player')  
+        add_card_to_init(npc_cards_j, init_cards_j, npc_collected_cards, card_dispose_npc, 'NPC')  
     else
-        add_card_to_init(npc_cards_j, init_cards_j, npc_collected_cards, card_dispose_npc) 
-        add_card_to_init(player_cards_j, init_cards_j, player_collected_cards, card_dispose)  
+        add_card_to_init(npc_cards_j, init_cards_j, npc_collected_cards, card_dispose_npc, 'NPC') 
+        add_card_to_init(player_cards_j, init_cards_j, player_collected_cards, card_dispose, 'Player')  
     end
 
   # Update json file will the updated player_cards_j
