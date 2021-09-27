@@ -1,14 +1,14 @@
 require 'json'
 require_relative 'player_cards'
 
-player_collected_cards = []
-npc_collected_cards = []
+
 
 # ---- Methods for players ---- #
 def print_init_cards(arr)
     arr.each do |hash|
         hash.each_value do |values|
             puts values.map { |c| "Card #{c[:num]}: #{c[:head]} head" }.join(' | ')
+            puts " "
         end
     end
 end
@@ -56,6 +56,29 @@ def display_total_heads(arr, name)
       puts "#{name} has #{num} head in total."
     end
 end
+
+# player_collected_cards / npc_collected_cards
+def who_wins_each_round(arr, arr2, winning)
+    player_total = arr.flatten.inject(0) { |sum, h| sum + h[:head]}
+    npc_total = arr2.flatten.inject(0) { |sum, h| sum + h[:head]}
+
+    if player_total > npc_total
+        puts 'NPC wins!'
+        winning << "npc"
+    elsif player_total < npc_total
+        puts 'Player wins!'
+        winning << "player"
+    else 
+        puts 'It"s a tie!'
+    end
+end
+
+# Who wins?!
+# winning
+def who_is_final_winner(arr)
+    puts "Winner is #{arr.tally.max_by{|k,v| v}[0].capitalize}! Congratulations!"      
+end
+
 
 # player_cards or npc_cards / init_cards / player or npc cards collected / card
 def choose_init_row(arr2, arr3, init_row, card)
@@ -197,62 +220,106 @@ def npc_card_dispose(npc_cards, init_cards)
     return get_num(npc_will_choose_card)
 end
 
-# --------------------------------------------------- #
 
-round = 10
-until round == 0
-  # Load init cards file
-  init_cards_j = JSON.load_file('init_cards.json', symbolize_names: true)
-  # Load player's cards file
-  player_cards_j = JSON.load_file('player_cards.json', symbolize_names: true)
-  # Load npc's cards file
-  npc_cards_j = JSON.load_file('npc_cards.json', symbolize_names: true)
+total_round = 0
+winning = []
+until total_round == 3
+    card = Card.new
+    init_cards = card.generate_init_cards
+    player_cards = card.sorted_cards(card.generate_player_cards)
+    npc_cards = card.sorted_cards(card.generate_npc_cards)
 
-
-  print_init_cards(init_cards_j)
-  puts " -------------------------------------------------------------------------- "
-  puts "You have - "
-  puts " -------------------------------------------------------------------------- "
-  print_player_cards(player_cards_j)
-  puts " -------------------------------------------------------------------------- "
-  puts "NPC has - "
-  puts " -------------------------------------------------------------------------- "
-  print_player_cards(npc_cards_j)
-  display_total_heads(player_collected_cards, 'Player')
-  display_total_heads(npc_collected_cards, 'NPC')
-
-  # Prompt player select a card to place outside
-  puts "Player: Card you want to place outside? "
-  card_dispose = gets.chomp.to_i
-
-    # Npc select a card to place outside
-    card_dispose_npc = npc_card_dispose(npc_cards_j, init_cards_j)
-
-    display_disposed_card('Player', card_dispose)
-    display_disposed_card('NPC', card_dispose_npc)
-    
-
-        
-    if card_dispose < card_dispose_npc
-        add_card_to_init(player_cards_j, init_cards_j, player_collected_cards, card_dispose, 'Player')  
-        add_card_to_init(npc_cards_j, init_cards_j, npc_collected_cards, card_dispose_npc, 'NPC')  
-    else
-        add_card_to_init(npc_cards_j, init_cards_j, npc_collected_cards, card_dispose_npc, 'NPC') 
-        add_card_to_init(player_cards_j, init_cards_j, player_collected_cards, card_dispose, 'Player')  
+    File.open('init_cards.json', 'w') do |f|
+    f.puts(init_cards.to_json)
     end
 
-  # Update json file will the updated player_cards_j
-  save('player_cards.json', player_cards_j)
-  # Update json file will the updated init_cards_j
-  save('init_cards.json', init_cards_j)
-  # Update json file will the updated init_cards_j
-  save('npc_cards.json', npc_cards_j)
-  
-  round -= 1
+    File.open('player_cards.json', 'w') do |f|
+    f.puts(player_cards.to_json)
+    end
+
+    File.open('npc_cards.json', 'w') do |f|
+    f.puts(npc_cards.to_json)
+    end
+
+    # Load init cards file
+    init_cards_j = JSON.load_file('init_cards.json', symbolize_names: true)
+    # Load player's cards file
+    player_cards_j = JSON.load_file('player_cards.json', symbolize_names: true)
+    # Load npc's cards file
+    npc_cards_j = JSON.load_file('npc_cards.json', symbolize_names: true)
+
+    player_collected_cards = []
+    npc_collected_cards = []
+    
+    round = 10
+    until round == 0        
+
+    print_init_cards(init_cards_j)
+    puts "--------------------------------------------------------------------------"
+    puts "You have - "
+    puts " "
+    print_player_cards(player_cards_j)
+    puts " "
+    puts "--------------------------------------------------------------------------"
+    display_total_heads(player_collected_cards, 'Player')
+    puts " "
+    display_total_heads(npc_collected_cards, 'NPC')
+    puts "--------------------------------------------------------------------------"
+
+    # Prompt player select a card to place outside
+    puts "Player: Card you want to place outside? "
+    card_dispose = gets.chomp.to_i
+
+        # Npc select a card to place outside
+        card_dispose_npc = npc_card_dispose(npc_cards_j, init_cards_j)
+
+        puts " "
+        puts " *  *  *  *  * "
+        puts " "
+        display_disposed_card('Player', card_dispose)
+        puts " "
+        display_disposed_card('NPC', card_dispose_npc)
+        puts " "
+        puts " *  *  *  *  * "
+        puts " "
+        
+        if card_dispose < card_dispose_npc
+            add_card_to_init(player_cards_j, init_cards_j, player_collected_cards, card_dispose, 'Player')  
+            add_card_to_init(npc_cards_j, init_cards_j, npc_collected_cards, card_dispose_npc, 'NPC')  
+        else
+            add_card_to_init(npc_cards_j, init_cards_j, npc_collected_cards, card_dispose_npc, 'NPC') 
+            add_card_to_init(player_cards_j, init_cards_j, player_collected_cards, card_dispose, 'Player')  
+        end
+
+        # # Update json file will the updated player_cards_j
+        # save('player_cards.json', player_cards_j)
+        # # Update json file will the updated init_cards_j
+        # save('init_cards.json', init_cards_j)
+        # # Update json file will the updated init_cards_j
+        # save('npc_cards.json', npc_cards_j)
+        
+        round -= 1
+    end
+
+    print_init_cards(init_cards_j)
+    display_total_heads(player_collected_cards, 'Player')
+    display_total_heads(npc_collected_cards, 'NPC')
+
+    total_round += 1
+    puts " "
+    puts "This round is finished!!!!"
+    puts " "
+    who_wins_each_round(player_collected_cards, npc_collected_cards, winning)
+    puts "____________________________________________ "
+    puts "____________________________________________ "
+    puts " "
+    puts " "
+    
 end
-print_init_cards(init_cards_j)
-display_total_heads(player_collected_cards, 'Player')
-display_total_heads(npc_collected_cards, 'NPC')
+puts "Game is finished"
+who_is_final_winner(winning)
+
+
 
 
 
