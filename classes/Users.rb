@@ -1,4 +1,5 @@
 require 'json'
+require 'tty-prompt'
 require_relative 'Deck'
 
 
@@ -155,7 +156,9 @@ class Users
 
     # Add disposed card to one of the init rows
     # player_cards or npc_cards / init_cards / player_cards_collected or npc_cards_collected/ num of card_dispose
-    def add_card_to_init(arr, arr2, arr3, num, name)  
+    def add_card_to_init(arr, arr2, arr3, num, name) 
+        prompt = TTY::Prompt.new
+
         arr.each do |card|
             temp_arr = []
             # Iterate player cards to compare num to [:num]
@@ -172,9 +175,11 @@ class Users
                 when 0
                     # If it's player, prompt player to choose which row they want to put the card
                     if name != 'NPC'
-                        puts " * * * * * "
-                        puts "#{name} Which row you want to put instead? "
-                        init_row = gets.chomp.to_i
+                        puts "* * * * * * * * * * * * * * * * * * * * * * * * *"
+                        rows = {'Row 1': 1, 'Row 2': 2, 'Row 3': 3, 'Row 4':4}
+                        init_row = prompt.select("Which row you want to place the card?", rows)
+                        # puts "#{name} Which row you want to put instead? "
+                        # init_row = gets.chomp.to_i
                         choose_init_row(arr2, arr3, init_row, card)
                     # If it's npc, use method to calcute which row they will put the card
                     else
