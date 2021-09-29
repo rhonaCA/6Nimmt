@@ -10,7 +10,7 @@ deck.prepare_deck
 deck.generate_json('deck.json', deck.deck)
 
 
-def start_game
+def start_game(name)
   prompt = TTY::Prompt.new
 
   players = Players.new
@@ -59,7 +59,7 @@ def start_game
     
       # puts "Here's your card: "
       # players.print_player_cards(player_cards_j)
-      users.display_total_heads(player_collected_cards, 'Player')
+      users.display_total_heads(player_collected_cards, name)
       puts ' '
       users.display_total_heads(npc_collected_cards, 'NPC')
       puts ' '
@@ -69,7 +69,7 @@ def start_game
       hash_for_prompt = players.print_player_cards(player_cards_j)
       if card_dispose and card_dispose_npc
         puts ' '    
-        users.display_disposed_card('Player', card_dispose)
+        users.display_disposed_card(name, card_dispose)
         puts ' '
         users.display_disposed_card('NPC', card_dispose_npc)
         puts ' '  
@@ -80,13 +80,13 @@ def start_game
       card_dispose = prompt.select('Which card do you want to play?', hash_for_prompt, cycle: true, per_page: 12).to_i
       
       if card_dispose == -1
-        print_game_over()
+        game_over()
       end
       while card_dispose == 0
         show_rules_page
         ans = prompt_input({ 'Yes I am ready!': 1, 'Exit Game': 3 }, 'Ready to resume the game?')
         if ans == 3
-          print_game_over()
+          game_over()
         end
         system "clear"
         puts '* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *'
@@ -114,7 +114,7 @@ def start_game
     puts ' '
     # player.display_total_heads
     # npc.dispay_total_heads
-    users.display_total_heads(player_collected_cards, 'Player')
+    users.display_total_heads(player_collected_cards, name)
     puts ' '
     users.display_total_heads(npc_collected_cards, 'NPC')
     puts ' '
@@ -123,13 +123,13 @@ def start_game
     puts "This round is finished - "
     # puts "Press enter to continue..."
     # gets.chomp
-    users.who_wins_each_round(player_collected_cards, npc_collected_cards, player_total, npc_total)
+    users.who_wins_each_round(player_collected_cards, npc_collected_cards, player_total, npc_total, name)
     puts '* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *'
     puts ' '
-    users.display_total_score(player_total, npc_total)
+    users.display_total_score(player_total, npc_total, name)
     puts '* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *'
     puts ' '
-    game_status = users.check_66(player_total, npc_total, game_status)
+    game_status = users.check_66(player_total, npc_total, game_status, name)
     puts ' '
     puts "Press enter to move onto the next round..."
     gets.chomp

@@ -156,7 +156,7 @@ class Users
     puts ' '
     puts '* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *'
     puts ' '
-    rows = { 'Row 1': 1, 'Row 2': 2, 'Row 3': 3, 'Row 4': 4, 'Check out the rules!': 5 }
+    rows = { 'Row 1': 1, 'Row 2': 2, 'Row 3': 3, 'Row 4': 4, 'Check out the rules!': 5, 'Exit game': 6 }
     init_row = prompt.select("Which row you want to place the card?", rows, cycle: true)
     return init_row
   end
@@ -185,12 +185,14 @@ class Users
           choose_init_row(arr2, arr3, init_row, card)
         else
           init_row = prompt_question()
+          # If player choose to exit the game
+
           # If player choose the to check the rules page
           while init_row == 5
             show_rules_page
             ans = prompt_input({ 'Yes I am ready!': 1, 'Exit Game': 3 }, 'Ready to resume the game?')
             if ans == 3
-              print_game_over()
+              game_over()
             end
             system 'clear'
 
@@ -199,6 +201,9 @@ class Users
             display_disposed_card(name, num)
             # print init cards again
             init_row = prompt_question()
+          end
+          if init_row == 6
+            game_over()
           end
           choose_init_row(arr2, arr3, init_row, card)
         end
@@ -260,7 +265,7 @@ class Users
     puts Rainbow("#{name} ").magenta.bright + 'had put ' + Rainbow("card #{num}").magenta.bright
   end
 
-  def who_wins_each_round(arr, arr2, arr4, arr5) # player_collected_cards / npc_collected_cards / player_total / npc_total
+  def who_wins_each_round(arr, arr2, arr4, arr5, name) # player_collected_cards / npc_collected_cards / player_total / npc_total
     # @player.score
     # @npc.score
 
@@ -272,7 +277,7 @@ class Users
       puts Rainbow('NPC wins this round!').orangered.bright
       puts ' '
     elsif player_score < npc_score
-      puts Rainbow('Player wins this round!').orangered.bright
+      puts Rainbow("#{name} wins this round!").orangered.bright
       puts ' '
     else
       puts Rainbow('It\'s a tie!').orangered.bright
@@ -283,35 +288,57 @@ class Users
   end
 
   # Display total cattle heads each player have after each round
-  def display_total_score(arr, arr2) # player_total / #npc_total
-    puts Rainbow('Player ').hotpink.bright + 'has ' + Rainbow("#{arr.sum} ").hotpink.bright + '🐮 in total'
+  def display_total_score(arr, arr2, name) # player_total / #npc_total
+    puts Rainbow("#{name} ").hotpink.bright + 'has ' + Rainbow("#{arr.sum} ").hotpink.bright + '🐮 in total'
     puts ' '
     puts Rainbow('NPC ').hotpink.bright + 'has ' + Rainbow("#{arr2.sum} ").hotpink.bright + '🐮 in total'
     puts ' '
   end
 
   # Find out who wins after one player reach 66 cattle heads
-  def who_is_final_winner(arr4, arr5) # player_total / npc_total
+  def who_is_final_winner(arr4, arr5, name) # player_total / npc_total
     if arr4.sum < arr5.sum
       puts '👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏 '
       puts ' '
-      puts Rainbow('                    Winner is Player, congratulations!').gold.bright
+      puts Rainbow("                    Winner is #{name}, congratulations!").gold.bright
       puts ' '
       puts '👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏'
+      
+      begin
+      CSV.open('score_board.csv', 'a') do |csv| 
+        csv << [name.upcase, arr4.sum]
+      end
+      rescue
+        puts "Something went wrong!"
+        puts "Exiting now please try again :)"
+        exit 
+      end
+
     else
       puts '👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏'
       puts ' '
-      puts Rainbow('                              Winner is NPC!').gold.bright
+      puts Rainbow("                              Winner is NPC!").gold.bright
       puts ' '
       puts '👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏'
+
+      begin
+        CSV.open('score_board.csv', 'a') do |csv| 
+          csv << ['NPC', arr5.sum]
+        end
+        rescue
+          puts "Something went wrong!"
+          puts "Exiting now please try again :)"
+          exit 
+        end
+
     end
     # puts "Winner is #{arr.tally.max_by{|k,v| v}[0].capitalize}! Congratulations!"
   end
 
   # Check if users have reach 66 cattle heads
-  def check_66(arr4, arr5, _game_status)
+  def check_66(arr4, arr5, _game_status, name)
     if arr4.sum >= 66 || arr5.sum >= 66
-      who_is_final_winner(arr4, arr5)
+      who_is_final_winner(arr4, arr5, name)
       return false
     end
     return true

@@ -34,9 +34,17 @@ def prompt_input(choices, label)
     return prompt.select(label, choices, cycle: true)
 end
 
-def print_game_over
+def game_over
   puts ' '
   puts Rainbow('Goodbye, thanks for playing!').lemonchiffon
   puts ' '
   exit
+end
+
+def show_score_board
+  puts Rainbow('Score Board'.center(20)).underline.bright.aqua
+  puts ' '
+  CSV.foreach('score_board.csv') do |row|
+    puts Rainbow(row[0].center(row[0].length)).lightblue + Rainbow(row[1].center(35 - row[0].length)).lightblue
+  end
 end

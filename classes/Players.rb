@@ -18,8 +18,8 @@ class Players < Users
         arr.map do |c|
             hash_for_prompt.store("Card #{c[:num]} - #{c[:head]} 🐮", "#{c[:num]}") 
         end
-        hash_for_prompt.store("View Rules", 0) 
-        hash_for_prompt.store("Exit", -1) 
+        hash_for_prompt.store("Check out the rules", 0) 
+        hash_for_prompt.store("Exit game", -1) 
         return hash_for_prompt
     end
 end
