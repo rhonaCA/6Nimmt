@@ -7,9 +7,9 @@ require_relative './helpers/methods.rb'
 
 # include Output::Users
 
-
+system 'clear'
 puts ' '
-puts Rainbow('Welcome to 6 Nimmt!').blue.bright.underline
+puts Rainbow('Welcome to 6 Nimmt!').cyan.bright.underline
 puts ' '
 ans = prompt_input({ 'Start the game': 1, 'Check out the rules first': 2, 'Exit': 3 }, 'Shall we start?')
 until ans == 3
@@ -24,4 +24,6 @@ until ans == 3
     system 'clear'
   end
 end
-puts 'Goodbye, thanks for playing!'
+puts ' '
+puts Rainbow('Goodbye, thanks for playing!').lemonchiffon
+puts ' '

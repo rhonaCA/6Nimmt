@@ -23,7 +23,7 @@ def print_init_cards(arr) # init_cards_j
     arr.each do |hash|
       # Iterate each init row and join by |
       hash.each_value do |values|
-        puts values.map { |c| "Card #{c[:num]}: #{c[:head]} 🐮" }.join(' | ')
+        puts values.map { |c| Rainbow("Card #{c[:num]}: ").indianred.bright + Rainbow("#{c[:head]} 🐮").papayawhip }.join(' | ')
         puts " "
       end
     end
@@ -32,4 +32,11 @@ def print_init_cards(arr) # init_cards_j
 def prompt_input(choices, label)
     prompt = TTY::Prompt.new
     return prompt.select(label, choices, cycle: true)
+end
+
+def print_game_over
+  puts ' '
+  puts Rainbow('Goodbye, thanks for playing!').lemonchiffon
+  puts ' '
+  exit
 end

@@ -3,6 +3,7 @@ require 'json'
 require_relative 'Players'
 require_relative 'NPC'
 require_relative '../helpers/Rules'
+require_relative '../helpers/Methods'
 
 deck = Deck.new
 deck.prepare_deck
@@ -38,7 +39,7 @@ def start_game
       npc_cards_j = JSON.load_file('npc_cards.json', symbolize_names: true)
     rescue
       puts "Something went wrong!"
-      puts "Exiting now please try again."
+      puts "Exiting now please try again :)"
       exit
     end
 
@@ -50,35 +51,52 @@ def start_game
     card_dispose_npc = nil
     until turn == 0
       system "clear"
-      puts '* * * * * *'
+      puts '* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *'
       puts ' '
-
       print_init_cards(init_cards_j)
+      puts '* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *'
+      puts ' '
+    
       # puts "Here's your card: "
       # players.print_player_cards(player_cards_j)
-
       users.display_total_heads(player_collected_cards, 'Player')
+      puts ' '
       users.display_total_heads(npc_collected_cards, 'NPC')
+      puts ' '
+      puts '* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *'
 
       # Map player_cards_j to a new array for tty-prompt
       hash_for_prompt = players.print_player_cards(player_cards_j)
       if card_dispose and card_dispose_npc
-        puts '------ '    
+        puts ' '    
         users.display_disposed_card('Player', card_dispose)
+        puts ' '
         users.display_disposed_card('NPC', card_dispose_npc)
-        puts '------ '    
+        puts ' '  
+        puts '* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *'
+
       end
-      card_dispose = prompt.select('Which card do you want to play?', hash_for_prompt, cycle: true, per_page: 10).to_i
+      puts ' '
+      card_dispose = prompt.select('Which card do you want to play?', hash_for_prompt, cycle: true, per_page: 12).to_i
       
-      # View rules when choosing cards
-      # NPC select a card to place outside
-      # while card_dispose == 0
-      #   show_rules_page
-      #   ans = prompt_input({ 'Yes I am ready!': 1, 'Exit Game': 3 }, 'Ready to resume the game?')
-      #   exit if ans == 3
-      #   card_dispose = prompt.select('Which card do you want to play?', hash_for_prompt, cycle: true,
-      #     per_page: 10).to_i
-      # end
+      if card_dispose == -1
+        print_game_over()
+      end
+      while card_dispose == 0
+        show_rules_page
+        ans = prompt_input({ 'Yes I am ready!': 1, 'Exit Game': 3 }, 'Ready to resume the game?')
+        if ans == 3
+          print_game_over()
+        end
+        system "clear"
+        puts '* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *'
+        puts ' '
+        print_init_cards(init_cards_j)
+        puts '* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *'
+        puts ' '
+        card_dispose = prompt.select('Which card do you want to play?', hash_for_prompt, cycle: true,
+          per_page: 12).to_i
+      end
 
       card_dispose_npc = npc.npc_card_dispose(npc_cards_j, init_cards_j)
       
@@ -89,17 +107,28 @@ def start_game
 
     end
     system 'clear'
+    puts '* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *'
+    puts ' '
     print_init_cards(init_cards_j)
+    puts '* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *'
+    puts ' '
     # player.display_total_heads
     # npc.dispay_total_heads
     users.display_total_heads(player_collected_cards, 'Player')
+    puts ' '
     users.display_total_heads(npc_collected_cards, 'NPC')
     puts ' '
-    puts "This round is finished."
+    puts '* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *'
+    puts ' '
+    puts "This round is finished - "
     # puts "Press enter to continue..."
     # gets.chomp
     users.who_wins_each_round(player_collected_cards, npc_collected_cards, player_total, npc_total)
+    puts '* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *'
+    puts ' '
     users.display_total_score(player_total, npc_total)
+    puts '* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *'
+    puts ' '
     game_status = users.check_66(player_total, npc_total, game_status)
     puts ' '
     puts "Press enter to move onto the next round..."

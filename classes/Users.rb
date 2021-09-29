@@ -2,7 +2,7 @@ require 'json'
 require 'tty-prompt'
 require_relative 'Deck'
 require_relative '../helpers/Rules'
-require_relative '../helpers/methods'
+require_relative '../helpers/Methods'
 
 class Users
   # include Output::Cards
@@ -153,8 +153,10 @@ class Users
   # Prompt user to choose a row to place
   def prompt_question
     prompt = TTY::Prompt.new
-    puts "* * * * * * * * * * * * * * * * * * * * * * * * *"
-    rows = { 'Row 1': 1, 'Row 2': 2, 'Row 3': 3, 'Row 4': 4, 'Check out the rules': 5 }
+    puts ' '
+    puts '* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *'
+    puts ' '
+    rows = { 'Row 1': 1, 'Row 2': 2, 'Row 3': 3, 'Row 4': 4, 'Check out the rules!': 5 }
     init_row = prompt.select("Which row you want to place the card?", rows, cycle: true)
     return init_row
   end
@@ -188,8 +190,7 @@ class Users
             show_rules_page
             ans = prompt_input({ 'Yes I am ready!': 1, 'Exit Game': 3 }, 'Ready to resume the game?')
             if ans == 3
-              puts 'Goodbye, thanks for playing!'
-              exit
+              print_game_over()
             end
             system 'clear'
 
@@ -245,7 +246,7 @@ class Users
   # Display how many heads player and npc currently have
   def display_total_heads(arr, name) # player_collected_cards or npc_collected_cards / player or npc
     num = arr.flatten.inject(0) { |sum, h| sum + h[:head] }
-    puts "#{name} has #{num} 🐮."
+    puts Rainbow("#{name} ").cyan.bright + "has " + Rainbow("#{num} ").cyan.bright + "🐮"
   end
   
   # def display_total_heads() # player_collected_cards or npc_collected_cards / player or npc
@@ -256,7 +257,7 @@ class Users
 
   # Display which card player and npc have disposed
   def display_disposed_card(name, num)
-    puts "#{name} has put card #{num}"
+    puts Rainbow("#{name} ").magenta.bright + 'had put ' + Rainbow("card #{num}").magenta.bright
   end
 
   def who_wins_each_round(arr, arr2, arr4, arr5) # player_collected_cards / npc_collected_cards / player_total / npc_total
@@ -268,13 +269,13 @@ class Users
     npc_score = arr2.flatten.inject(0) { |sum, h| sum + h[:head] }
 
     if player_score > npc_score
-      puts 'NPC wins this round!'
+      puts Rainbow('NPC wins this round!').orangered.bright
       puts ' '
     elsif player_score < npc_score
-      puts 'Player wins this round!'
+      puts Rainbow('Player wins this round!').orangered.bright
       puts ' '
     else
-      puts 'It\'s a tie!'
+      puts Rainbow('It\'s a tie!').orangered.bright
       puts ' '
     end
     arr4 << player_score
@@ -283,16 +284,26 @@ class Users
 
   # Display total cattle heads each player have after each round
   def display_total_score(arr, arr2) # player_total / #npc_total
-    puts "Player has #{arr.sum} 🐮 in total."
-    puts "NPC has #{arr2.sum} 🐮 in total."
+    puts Rainbow('Player ').hotpink.bright + 'has ' + Rainbow("#{arr.sum} ").hotpink.bright + '🐮 in total'
+    puts ' '
+    puts Rainbow('NPC ').hotpink.bright + 'has ' + Rainbow("#{arr2.sum} ").hotpink.bright + '🐮 in total'
+    puts ' '
   end
 
   # Find out who wins after one player reach 66 cattle heads
   def who_is_final_winner(arr4, arr5) # player_total / npc_total
     if arr4.sum < arr5.sum
-      puts "Winner is Player, congratulations!"
+      puts '👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏 '
+      puts ' '
+      puts Rainbow('                    Winner is Player, congratulations!').gold.bright
+      puts ' '
+      puts '👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏'
     else
-      puts "Winner is NPC, congratulations!"
+      puts '👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏'
+      puts ' '
+      puts Rainbow('                              Winner is NPC!').gold.bright
+      puts ' '
+      puts '👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏'
     end
     # puts "Winner is #{arr.tally.max_by{|k,v| v}[0].capitalize}! Congratulations!"
   end
