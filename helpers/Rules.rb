@@ -44,7 +44,5 @@
         puts 'The game ends when one of the player collects a total of 66 or more cattle heads. The winner is the player who has collected the fewest cattle heads.'
         puts ' '
         puts ' '
-        puts 'Ready to play the game? (y,n)'
-        return ans = gets.chomp
     end
 
