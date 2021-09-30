@@ -1,5 +1,5 @@
 require 'json'
-require_relative 'Users'
+require_relative 'users'
 
 class NPC < Users
 

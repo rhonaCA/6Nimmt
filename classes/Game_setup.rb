@@ -1,14 +1,34 @@
 require 'json'
 
-require_relative 'Players'
-require_relative 'NPC'
-require_relative '../helpers/Rules'
-require_relative '../helpers/Methods'
+require_relative 'players'
+require_relative 'npc'
+require_relative '../helpers/rules'
+require_relative '../helpers/methods'
 
 deck = Deck.new
 deck.prepare_deck
 deck.generate_json('deck.json', deck.deck)
 
+def game_round(ans, name)
+  until ans == 3
+    case ans
+    when 1
+      start_game(name)
+      ans = prompt_input({ 'Play Again?': 1, 'Check out the rules first': 2, 'Checkout score board': 4, 'Exit game': 3 }, 'What next?')
+      system 'clear'
+    when 2
+      show_rules_page
+      ans = prompt_input({ 'Yes I am ready!': 1, 'Exit game': 3}, 'Ready to play the game?')
+      system 'clear'
+    when 4
+      system 'clear'
+      show_score_board()
+      puts ' '
+      ans = prompt_input({ 'Yes I am ready!': 1, 'Check out the rules first': 2, 'Exit game': 3 }, 'Ready to play the game?')
+    end
+  end
+  game_over(name)
+end
 
 def start_game(name)
   prompt = TTY::Prompt.new
@@ -132,6 +152,7 @@ def start_game(name)
     game_status = users.check_66(player_total, npc_total, game_status, name)
     puts ' '
     puts "Press enter to move onto the next round..."
-    gets.chomp
+    STDIN.gets
+    system 'clear'
   end
 end

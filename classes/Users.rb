@@ -1,15 +1,13 @@
 require 'json'
 require 'tty-prompt'
-require_relative 'Deck'
-require_relative '../helpers/Rules'
-require_relative '../helpers/Methods'
+require_relative 'deck'
+require_relative '../helpers/rules'
+require_relative '../helpers/methods'
 
 class Users
   # include Output::Cards
-
-
   def initialize
-    print
+    
     @parsed = JSON.load_file('deck.json')
     @used_cards = []
     @init_cards = [
@@ -254,21 +252,22 @@ class Users
     puts Rainbow("#{name} ").cyan.bright + "has " + Rainbow("#{num} ").cyan.bright + "🐮"
   end
   
+  # Display which card player and npc have disposed
+  def display_disposed_card(name, num)
+    puts Rainbow("#{name} ").magenta.bright + 'had put ' + Rainbow("card #{num}").magenta.bright
+  end
+
+  
   # def display_total_heads() # player_collected_cards or npc_collected_cards / player or npc
   #   num = @heads.flatten.inject(0) { |sum, h| sum + h[:head] }
   #   puts "#{@name} has #{num} 🐮."
   # end
 
 
-  # Display which card player and npc have disposed
-  def display_disposed_card(name, num)
-    puts Rainbow("#{name} ").magenta.bright + 'had put ' + Rainbow("card #{num}").magenta.bright
-  end
 
   def who_wins_each_round(arr, arr2, arr4, arr5, name) # player_collected_cards / npc_collected_cards / player_total / npc_total
     # @player.score
     # @npc.score
-
     # @player.hand
     player_score = arr.flatten.inject(0) { |sum, h| sum + h[:head] }
     npc_score = arr2.flatten.inject(0) { |sum, h| sum + h[:head] }
@@ -295,50 +294,44 @@ class Users
     puts ' '
   end
 
-  # Find out who wins after one player reach 66 cattle heads
-  def who_is_final_winner(arr4, arr5, name) # player_total / npc_total
-    if arr4.sum < arr5.sum
-      puts '👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏 '
-      puts ' '
-      puts Rainbow("                    Winner is #{name}, congratulations!").gold.bright
-      puts ' '
-      puts '👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏'
-      
-      begin
-      CSV.open('score_board.csv', 'a') do |csv| 
-        csv << [name.upcase, arr4.sum]
+  def display_winner(name)
+    puts '👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏 '
+    puts ' '
+    puts Rainbow("                    Winner is #{name}, congratulations!").gold.bright
+    puts ' '
+    puts '👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏'
+  end
+
+  def add_to_csv(path, name, score)
+    begin
+      CSV.open(path, 'a') do |csv| 
+        csv << [name, score]
       end
       rescue
         puts "Something went wrong!"
         puts "Exiting now please try again :)"
         exit 
-      end
+    end
+  end
 
+  # Find out who wins after one player reach 66 cattle heads
+  def who_is_final_winner(score1, score2, name) # player_total / npc_total
+    if score1 < score2
+      display_winner(name)
+      add_to_csv('score_board.csv',name, score1)
     else
-      puts '👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏'
-      puts ' '
-      puts Rainbow("                              Winner is NPC!").gold.bright
-      puts ' '
-      puts '👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏  👏'
-
-      begin
-        CSV.open('score_board.csv', 'a') do |csv| 
-          csv << ['NPC', arr5.sum]
-        end
-        rescue
-          puts "Something went wrong!"
-          puts "Exiting now please try again :)"
-          exit 
-        end
-
+      display_winner("NPC")
+      add_to_csv('score_board.csv','NPC', score2)
     end
     # puts "Winner is #{arr.tally.max_by{|k,v| v}[0].capitalize}! Congratulations!"
   end
 
   # Check if users have reach 66 cattle heads
-  def check_66(arr4, arr5, _game_status, name)
-    if arr4.sum >= 66 || arr5.sum >= 66
-      who_is_final_winner(arr4, arr5, name)
+  def check_66(arr4, arr5, game_status, name)
+    player_score = arr4.sum
+    npc_score = arr5.sum
+    if player_score >= 66 || npc_score >= 66
+      who_is_final_winner(player_score, npc_score, name)
       return false
     end
     return true

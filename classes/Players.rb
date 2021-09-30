@@ -1,5 +1,5 @@
 require 'json'
-require_relative 'Users'
+require_relative 'users'
 
 class Players < Users
     # Iterate player_cards_j to print out each player cards
