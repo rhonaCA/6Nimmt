@@ -12,21 +12,29 @@ require_relative 'helpers/methods.rb'
 
 a = Artii::Base.new :font => 'big'
 
-cli = ARGV[0].downcase
 
 begin
+  if ARGV.length == 0
+    raise NoMethodError
+  end
+  cli = ARGV[0].downcase
   name = ARGV[1]
   if name.index( /[^[:alnum:]]/ ) != nil
     raise WrongInputError
   end
 rescue WrongInputError
   puts ' '
-  puts Rainbow('Sorry, name can only contains letters and numbers. Try again!').tomato.bright 
+  puts Rainbow('Sorry, name can only contains letters and numbers. Please try again!').tomato.bright 
+  puts ' '
+  exit
+rescue NoMethodError
+  puts ' '
+  puts Rainbow('Sorry, seems like you are missing something. Please try again!').tomato.bright 
   puts ' '
   exit
 rescue 
   puts ' '
-  puts Rainbow('Sorry, something went wrong. Please try again!').tomato.bright 
+  puts Rainbow('Sorry, name can only contains letters and numbers. Please try again!').tomato.bright 
   puts ' '
   exit
 end
