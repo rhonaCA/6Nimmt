@@ -1,6 +1,7 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    artii (2.1.2)
     curses (1.4.2)
     pastel (0.8.0)
       tty-color (~> 0.5)
@@ -21,6 +22,7 @@ PLATFORMS
   arm64-darwin-20
 
 DEPENDENCIES
+  artii (~> 2.1)
   curses (~> 1.4)
   rainbow (~> 3.0)
   tty-prompt (~> 0.23.1)

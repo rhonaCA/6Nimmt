@@ -34,17 +34,28 @@ def prompt_input(choices, label)
     return prompt.select(label, choices, cycle: true)
 end
 
-def game_over
+def game_over(name="player")
+  system 'clear'
   puts ' '
-  puts Rainbow('Goodbye, thanks for playing!').lemonchiffon
+  puts Rainbow("Goodbye #{name}, thanks for playing!").lemonchiffon
   puts ' '
   exit
 end
 
 def show_score_board
-  puts Rainbow('Score Board'.center(20)).underline.bright.aqua
+  a = Artii::Base.new :font => 'big'
+  puts Rainbow(a.asciify('Score Board').center(20)).bright.aqua
   puts ' '
+  arr = []
   CSV.foreach('score_board.csv') do |row|
-    puts Rainbow(row[0].center(row[0].length)).lightblue + Rainbow(row[1].center(35 - row[0].length)).lightblue
+    arr << {name: row[0], score: row[1]}
+  end
+  sorted = arr.sort_by! do |k| 
+      k[:score]
+  end
+  score_board_arr = sorted.map { |element| [element[:name], element[:score]]}
+  score_board_arr.each do |item|
+    puts Rainbow(item[0].center(item[0].length + 22)).lightblue + Rainbow(item[1].center(35 - item[0].length)).lightblue
+    puts ' '
   end
 end

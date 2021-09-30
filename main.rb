@@ -1,7 +1,8 @@
 require 'json'
+require 'csv'
 require 'tty-prompt'
 require 'rainbow'
-require 'csv'
+require 'artii'
 
 require_relative 'classes/Game_setup.rb'
 require_relative 'classes/Errors.rb'
@@ -9,27 +10,39 @@ require_relative 'helpers/Methods.rb'
 
 # include Output::Users
 
+a = Artii::Base.new :font => 'big'
+
 system 'clear'
 puts ' '
-puts Rainbow('Welcome to 6 Nimmt!').cyan.bright.underline
+puts Rainbow(a.asciify('Welcome to Nimmt !')).lightskyblue.bright
 puts ' '
 
-begin
-  puts 'What\'s your name?'
-  name = gets.chomp
-  if name.empty? or name.nil?
-    raise EmptyInputError
-  end
-rescue EmptyInputError
-    puts Rainbow('You haven\'t put your name in yet.').tomato.bright
-    puts ' '
-    retry
-end
 
 ans = prompt_input({ 'Start the game': 1, 'Check out the rules first': 2, 'Checkout score board': 4, 'Exit game': 3 }, 'Shall we start?')
 until ans == 3
   case ans
   when 1
+
+    begin
+      puts ' '
+      puts 'What\'s your name?'
+      name = gets.chomp
+      if name.empty? or name.nil?
+        raise EmptyInputError
+      end
+      if name.gsub(/\s+/, "").index( /[^[:alnum:]]/ ) != nil
+        raise WrongInputError
+      end
+    rescue EmptyInputError
+        puts Rainbow('You haven\'t put your name in yet. Try again!').tomato.bright
+        puts ' '
+        retry
+    rescue WrongInputError
+      puts ' '
+      puts Rainbow('Sorry, name can only contains letters and numbers. Try again!').tomato.bright
+      retry    
+    end
+
     start_game(name)
     ans = prompt_input({ 'Play Again?': 1, 'Check out the rules first': 2, 'Exit game': 3 }, 'What next?')
     system 'clear'

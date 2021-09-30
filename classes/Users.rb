@@ -192,7 +192,7 @@ class Users
             show_rules_page
             ans = prompt_input({ 'Yes I am ready!': 1, 'Exit Game': 3 }, 'Ready to resume the game?')
             if ans == 3
-              game_over()
+              game_over(name)
             end
             system 'clear'
 
@@ -203,7 +203,7 @@ class Users
             init_row = prompt_question()
           end
           if init_row == 6
-            game_over()
+            game_over(name)
           end
           choose_init_row(arr2, arr3, init_row, card)
         end

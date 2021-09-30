@@ -80,13 +80,13 @@ def start_game(name)
       card_dispose = prompt.select('Which card do you want to play?', hash_for_prompt, cycle: true, per_page: 12).to_i
       
       if card_dispose == -1
-        game_over()
+        game_over(name)
       end
       while card_dispose == 0
         show_rules_page
         ans = prompt_input({ 'Yes I am ready!': 1, 'Exit Game': 3 }, 'Ready to resume the game?')
         if ans == 3
-          game_over()
+          game_over(name)
         end
         system "clear"
         puts '* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *'
