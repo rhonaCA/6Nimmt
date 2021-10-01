@@ -2,8 +2,6 @@ require 'json'
 require_relative 'users'
 
 class NPC < Users
-
-
     # Helper method of - NPC picks a card
     # Push a random from each row to npc_will_choose_card arr
     def add_random_card(arr, arr2)

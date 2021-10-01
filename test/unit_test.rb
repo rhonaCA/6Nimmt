@@ -32,6 +32,16 @@ class ScoreboardTest < Test::Unit::TestCase
     end
 end
 
+class UserTest < Test::Unit::TestCase 
+    def test_print_player_cards
+        players = Players.new
+        expected_result = {"Card 3 - 1 🐮"=>"3", "Card 7 - 1 🐮"=>"7", "Card 34 - 1 🐮"=>"34", "Card 45 - 2 🐮"=>"45", "Card 49 - 1 🐮"=>"49", "Card 50 - 3 🐮"=>"50", "Card 61 - 1 🐮"=>"61", "Card 68 - 1 🐮"=>"68", "Card 86 - 1 🐮"=>"86", "Card 93 - 1 🐮"=>"93", "Check out the rules"=>0, "Exit game"=>-1}
+        assert_equal(expected_result, players.print_player_cards([{"num":3,"head":1},{"num":7,"head":1},{"num":34,"head":1},{"num":45,"head":2},{"num":49,"head":1},{"num":50,"head":3},{"num":61,"head":1},{"num":68,"head":1},{"num":86,"head":1},{"num":93,"head":1}]))
+        expected_result = {"Card 6 - 1 🐮"=>"6", "Card 38 - 1 🐮"=>"38", "Card 42 - 1 🐮"=>"42", "Card 51 - 1 🐮"=>"51", "Card 60 - 3 🐮"=>"60", "Card 64 - 1 🐮"=>"64", "Card 70 - 3 🐮"=>"70", "Card 72 - 1 🐮"=>"72", "Card 75 - 2 🐮"=>"75", "Card 82 - 1 🐮"=>"82", "Check out the rules"=>0, "Exit game"=>-1}
+        assert_equal(expected_result, players.print_player_cards([{"num":6,"head":1},{"num":38,"head":1},{"num":42,"head":1},{"num":51,"head":1},{"num":60,"head":3},{"num":64,"head":1},{"num":70,"head":3},{"num":72,"head":1},{"num":75,"head":2},{"num":82,"head":1}]))
+    end
+end
+
 class ResultTest < Test::Unit::TestCase 
     def test_check_66_method
         require 'rainbow'
@@ -43,14 +53,3 @@ class ResultTest < Test::Unit::TestCase
         assert_equal(true, game_status)
     end
 end
-
-class UserTest < Test::Unit::TestCase 
-    def test_print_player_cards
-        players = Players.new
-        expected_result = {"Card 3 - 1 🐮"=>"3", "Card 7 - 1 🐮"=>"7", "Card 34 - 1 🐮"=>"34", "Card 45 - 2 🐮"=>"45", "Card 49 - 1 🐮"=>"49", "Card 50 - 3 🐮"=>"50", "Card 61 - 1 🐮"=>"61", "Card 68 - 1 🐮"=>"68", "Card 86 - 1 🐮"=>"86", "Card 93 - 1 🐮"=>"93", "Check out the rules"=>0, "Exit game"=>-1}
-        assert_equal(expected_result, players.print_player_cards([{"num":3,"head":1},{"num":7,"head":1},{"num":34,"head":1},{"num":45,"head":2},{"num":49,"head":1},{"num":50,"head":3},{"num":61,"head":1},{"num":68,"head":1},{"num":86,"head":1},{"num":93,"head":1}]))
-        expected_result = {"Card 6 - 1 🐮"=>"6", "Card 38 - 1 🐮"=>"38", "Card 42 - 1 🐮"=>"42", "Card 51 - 1 🐮"=>"51", "Card 60 - 3 🐮"=>"60", "Card 64 - 1 🐮"=>"64", "Card 70 - 3 🐮"=>"70", "Card 72 - 1 🐮"=>"72", "Card 75 - 2 🐮"=>"75", "Card 82 - 1 🐮"=>"82", "Check out the rules"=>0, "Exit game"=>-1}
-        assert_equal(expected_result, players.print_player_cards([{"num":6,"head":1},{"num":38,"head":1},{"num":42,"head":1},{"num":51,"head":1},{"num":60,"head":3},{"num":64,"head":1},{"num":70,"head":3},{"num":72,"head":1},{"num":75,"head":2},{"num":82,"head":1}]))
-    end
-end
-

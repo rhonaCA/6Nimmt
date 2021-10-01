@@ -1,13 +1,11 @@
 require 'json'
-require 'tty-prompt'
+
 require_relative 'deck'
 require_relative '../helpers/rules'
 require_relative '../helpers/methods'
 
 class Users
-  # include Output::Cards
   def initialize
-    
     @parsed = JSON.load_file('deck.json')
     @used_cards = []
     @init_cards = [
@@ -112,12 +110,7 @@ class Users
     arr.sort_by { |k| k[:num] }
   end
 
-
-
-  # Print out the init cards in separate rows
-
   # Check if player's dispose card larger or NPC's dispose card larger
-  # player_cards_j, init_cards_j, player_collected cards, card_dispose
   def check_which_card_bigger(arr, arr_npc, arr2, arr3, arr3_npc, num, num_npc)
     if num < num_npc
       add_card_to_init(arr, arr2, arr3, num, 'Player')
@@ -129,7 +122,7 @@ class Users
   end
 
   # Find out which init row npc will put their card when their disposed card is smaller than the cards outside
-  def npc_choose_init_row(arr2) # init_row
+  def npc_choose_init_row(arr2) 
     total_heads_on_each_row = []
     # iterate init_row
     arr2.each_with_index do |row, index|
@@ -141,7 +134,7 @@ class Users
   end
 
   # Player will input a num (1-4) to indicate which row they want to put the card
-  def choose_init_row(arr2, arr3, init_row, card) # init_cards / player cards collected / row that user pick / card
+  def choose_init_row(arr2, arr3, init_row, card)
     arr2[init_row - 1].values[0] << { num: card[:num], head: card[:head] }
     *first, last = arr2[init_row - 1].values[0]
     arr3 << first
@@ -160,7 +153,6 @@ class Users
   end
 
   # Add disposed card to one of the init rows
-  # player_cards or npc_cards / init_cards / player_cards_collected or npc_cards_collected/ num of card_dispose
   def add_card_to_init(arr, arr2, arr3, num, name)
     prompt = TTY::Prompt.new
 
@@ -183,12 +175,11 @@ class Users
           choose_init_row(arr2, arr3, init_row, card)
         else
           init_row = prompt_question()
-          # If player choose to exit the game
-
-          # If player choose the to check the rules page
+          # If player choose to check the rules page
           while init_row == 5
             show_rules_page
             ans = prompt_input({ 'Yes I am ready!': 1, 'Exit Game': 3 }, 'Ready to resume the game?')
+            # If player choose to exit game
             if ans == 3
               game_over(name)
             end
@@ -210,20 +201,18 @@ class Users
         arr2.each_with_index do |row, index|
           # Add the num and difference into an array
           if num > row.values[0].last[:num]
-            temp_arr.push(num: row.values[0].last[:num], head: row.values[0].last[:head],
-                          diff: num - row.values[0].last[:num], index: index)
+            temp_arr.push(num: row.values[0].last[:num], head: row.values[0].last[:head], diff: num - row.values[0].last[:num], index: index)
           end
         end
         min = find_min(temp_arr)
         max_5_on_each_init(arr2[min[:index]].values[0], arr3, card)
       end
-      # player_cards or npc_cards / num of dispose card
       delete_card(arr, num)
     end
   end
 
   # Check if the selected init row has 5 cards already
-  def max_5_on_each_init(arr2, arr3, item) # init_cards / player_cards_collected OR npc_cards_collected / card
+  def max_5_on_each_init(arr2, arr3, item)
     # If less than 5 cards, add the disposed card to that row
     if arr2.length < 5
       arr2 << { num: item[:num], head: item[:head] }
@@ -242,12 +231,12 @@ class Users
   end
 
   # Remove disposed card from player_cards or npc_cards pile
-  def delete_card(arr, num) # player_cards or npc_cards /  num of disposed card
+  def delete_card(arr, num) 
     arr.delete_if { |h| h[:num] == num }
   end
 
   # Display how many heads player and npc currently have
-  def display_total_heads(arr, name) # player_collected_cards or npc_collected_cards / player or npc
+  def display_total_heads(arr, name) 
     num = arr.flatten.inject(0) { |sum, h| sum + h[:head] }
     puts Rainbow("#{name} ").cyan.bright + "has " + Rainbow("#{num} ").cyan.bright + "🐮"
   end
@@ -257,18 +246,7 @@ class Users
     puts Rainbow("#{name} ").magenta.bright + 'had put ' + Rainbow("card #{num}").magenta.bright
   end
 
-  
-  # def display_total_heads() # player_collected_cards or npc_collected_cards / player or npc
-  #   num = @heads.flatten.inject(0) { |sum, h| sum + h[:head] }
-  #   puts "#{@name} has #{num} 🐮."
-  # end
-
-
-
-  def who_wins_each_round(arr, arr2, arr4, arr5, name) # player_collected_cards / npc_collected_cards / player_total / npc_total
-    # @player.score
-    # @npc.score
-    # @player.hand
+  def who_wins_each_round(arr, arr2, arr4, arr5, name)
     player_score = arr.flatten.inject(0) { |sum, h| sum + h[:head] }
     npc_score = arr2.flatten.inject(0) { |sum, h| sum + h[:head] }
 
@@ -287,7 +265,7 @@ class Users
   end
 
   # Display total cattle heads each player have after each round
-  def display_total_score(arr, arr2, name) # player_total / #npc_total
+  def display_total_score(arr, arr2, name)
     puts Rainbow("#{name} ").hotpink.bright + 'has ' + Rainbow("#{arr.sum} ").hotpink.bright + '🐮 in total'
     puts ' '
     puts Rainbow('NPC ').hotpink.bright + 'has ' + Rainbow("#{arr2.sum} ").hotpink.bright + '🐮 in total'
@@ -315,7 +293,7 @@ class Users
   end
 
   # Find out who wins after one player reach 66 cattle heads
-  def who_is_final_winner(score1, score2, name) # player_total / npc_total
+  def who_is_final_winner(score1, score2, name)
     if score1 < score2
       display_winner(name)
       add_to_csv('score_board.csv',name, score1)
@@ -323,7 +301,6 @@ class Users
       display_winner("NPC")
       add_to_csv('score_board.csv','NPC', score2)
     end
-    # puts "Winner is #{arr.tally.max_by{|k,v| v}[0].capitalize}! Congratulations!"
   end
 
   # Check if users have reach 66 cattle heads

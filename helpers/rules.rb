@@ -1,5 +1,4 @@
     def show_rules_page
-
         puts ' '
         a = Artii::Base.new :font => 'small'
         puts Rainbow(a.asciify('6 Nimmt! Rules')).bright.aqua
@@ -73,6 +72,5 @@
         puts ' '
         puts ' '
         puts ' '
-
     end
 

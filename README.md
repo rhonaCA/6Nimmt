@@ -8,17 +8,15 @@ This game has 104 cards, each contains a number and 1 to 7 cattle heads icons th
 # How to play
 
 ## **Goal of the game**
----
 Try not to get any cards as it will add up the penalty points.
 
 
 ## **Gameplay**
----
 Hi player, you are playing with 1 NPC in this game. Both of you will have 10 cards to start with each round. You will see 4 initial cards placed vertically on the screen and your own cards that have been arranged in ascending order. 
 
 At each turn, you can select a card to play by using ↑ / ↓ keys. After you selected a card, depending on whose card is smaller (you or NPC), that player will put their card at the end of one of the 4 rows first based on below rules:
 
-## **- Rule No. 1: Ascending Order**
+## **Rule No. 1: Ascending Order**
 
 The number of the card that is added to a row must be higher than the number of the current last card in that row.
 
@@ -148,7 +146,6 @@ At the end of each turn, you will need to select a new card to play, this is rep
 
 
 ## **When the game ends?**
----
 After 10 turns, the game will count the cattle heads on the cards gathered during the round, keep score of each player and a new hand will start.
 
 The game will end when you or NPC collect a total of 66 or more cattle heads. Whoever has collected the fewest cattle heads is the winner!
@@ -156,6 +153,7 @@ The game will end when you or NPC collect a total of 66 or more cattle heads. Wh
 Winner’s name and score will be kept in the scoreboard.
 
 ## **Ready to play?**
+<br>
 
 # To install the application
 
@@ -163,13 +161,13 @@ Winner’s name and score will be kept in the scoreboard.
 
 # To play the game
 
-2. Use command line to change directory into src folder.
+2. Use command line to change directory into that unzip folder.
 ```
 cd (path to src folder)
 Example:
-cd Downloads/TanNaLam_T1A3_6Nimmt-main/src
+cd Downloads/TanNaLam_T1A3_6Nimmt-main/
 ```
-3. Once you are in the src folder, use command line to run the script file.
+3. Once you are in the folder, use command line to run the script file.
 ```
 ./run_game.sh
 ```
@@ -192,20 +190,21 @@ This game is developed in Ruby and requires Ruby installed to run. Please check 
 
 Below are the dependencies required by running the game. All of them will be downloaded and installed for you when you run the game in script file.
 
-### **<li>Tty-prompt</li>** ~> 0.23.1
-
-### **<li>Tty-box</li>** ~> 0.7.0
-
-### **<li>Rainbow</li>** ~> 3.0
-
-### **<li>Artii</li>** ~> 2.1
-
-### ##<li>TestUnit</li> - For unit tests.
+**<li>Tty-prompt</li>** ~> 0.23.1
+<br>
+**<li>Tty-box</li>** ~> 0.7.0
+<br>
+**<li>Rainbow</li>** ~> 3.0
+<br>
+**<li>Artii</li>** ~> 2.1
+<br>
+**<li>TestUnit</li>** - For unit tests.
 
 # System/ hardware requirement
-Please ensure your terminal's size is at minimum 80(height) * 45(width) to have a better user experience.
+Please ensure your terminal's size is at minimum `80(height) * 45(width)` to have a better user experience.
 
-This game is using `tty-prompt` for player to select their choices. Although this gem does working on Windows, the 'select' feature may not work on Window when run from Git Bash. If you have any issues when playing this game, please see [here](https://github.com/piotrmurach/tty-prompt#windows-support) for more details and fixes. 
+This game is using `tty-prompt` for player to select their choices. Although this gem does working on Windows, the `select` feature may not work on Window when run from Git Bash. If you have any issues when playing this game, please see [here](https://github.com/piotrmurach/tty-prompt#windows-support) for more details and fixes. 
 
 This game is built on a M1 Apple Macbooks so any M1 users should be able to run it without any problem.
 
+# Enjoy! ☺️

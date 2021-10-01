@@ -5,38 +5,21 @@ require 'tty-box'
 require 'rainbow'
 require 'artii'
 
-require_relative 'classes/game_setup.rb'
-require_relative 'classes/errors.rb'
-require_relative 'helpers/methods.rb'
+require_relative 'classes/game_setup'
+require_relative 'classes/errors'
+require_relative 'helpers/methods'
 
 begin
-  # if ARGV.length == 0
-  #   raise NoMethodError
-  # end
-  # if ARGV.length == 2
     cli = ARGV[0].downcase
     name = ARGV[1]
     if name.index( /[^[:alnum:]]/ ) != nil
       raise WrongInputError
     end
-  # else
-  #   raise TooManyArgError
-  # end
 rescue WrongInputError
   puts ' '
   puts Rainbow('Sorry, name can only contains letters and numbers. Please try again!').tomato.bright 
   puts ' '
   exit
-# rescue NoMethodError
-#   puts ' '
-#   puts Rainbow('Sorry, seems like you are missing something. Please try again!').tomato.bright 
-#   puts ' '
-#   exit
-# rescue TooManyArgError
-#   puts ' '
-#   puts Rainbow('Sorry, seems like you are putting too many arguments in. Please try again!').tomato.bright 
-#   puts ' '
-#   exit
 rescue 
   puts ' '
   puts Rainbow('Sorry, something went wrong. Please try again!').tomato.bright 

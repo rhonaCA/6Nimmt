@@ -42,7 +42,7 @@ def start_game(name)
   game_status = true
   while game_status == true
     users = Users.new
-    # Dealt cards to each player and 4 initial cards out the front
+    # Deal cards to each player and 4 initial cards out the front
     init_cards = users.generate_init_cards
     player_cards = users.sorted_cards(users.generate_player_cards)
     npc_cards = users.sorted_cards(users.generate_npc_cards)
@@ -76,9 +76,7 @@ def start_game(name)
       print_init_cards(init_cards_j)
       puts '* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *'
       puts ' '
-    
-      # puts "Here's your card: "
-      # players.print_player_cards(player_cards_j)
+
       users.display_total_heads(player_collected_cards, name)
       puts ' '
       users.display_total_heads(npc_collected_cards, 'NPC')
@@ -120,7 +118,6 @@ def start_game(name)
 
       card_dispose_npc = npc.npc_card_dispose(npc_cards_j, init_cards_j)
       
-      # player_cards_j, init_cards_j, player_collected cards, card_dispose
       users.check_which_card_bigger(player_cards_j, npc_cards_j, init_cards_j, player_collected_cards,
         npc_collected_cards, card_dispose, card_dispose_npc)
       turn -= 1
@@ -132,8 +129,6 @@ def start_game(name)
     print_init_cards(init_cards_j)
     puts '* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *'
     puts ' '
-    # player.display_total_heads
-    # npc.dispay_total_heads
     users.display_total_heads(player_collected_cards, name)
     puts ' '
     users.display_total_heads(npc_collected_cards, 'NPC')
@@ -141,8 +136,6 @@ def start_game(name)
     puts '* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *'
     puts ' '
     puts "This round is finished - "
-    # puts "Press enter to continue..."
-    # gets.chomp
     users.who_wins_each_round(player_collected_cards, npc_collected_cards, player_total, npc_total, name)
     puts '* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *'
     puts ' '
