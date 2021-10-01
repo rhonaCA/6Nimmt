@@ -50,7 +50,7 @@ when 'start'
   system 'clear'
   puts ' '
   a = Artii::Base.new :font => 'big'
-  puts Rainbow(a.asciify('Welcome to Nimmt !')).lightskyblue.bright
+  puts Rainbow(a.asciify('Welcome to 6 Nimmt !')).lightskyblue.bright
   puts ' '
   ans = prompt_input({ 'Start the game': 1, 'Check out the rules first': 2, 'Checkout scoreboard': 4, 'Exit game': 3 }, 'Shall we start?')
   game_round(ans, name)
