@@ -10,17 +10,20 @@ require_relative 'helpers/methods.rb'
 
 # include Output::Users
 
-a = Artii::Base.new :font => 'big'
 
 
 begin
   if ARGV.length == 0
     raise NoMethodError
   end
-  cli = ARGV[0].downcase
-  name = ARGV[1]
-  if name.index( /[^[:alnum:]]/ ) != nil
-    raise WrongInputError
+  if ARGV.length == 2
+    cli = ARGV[0].downcase
+    name = ARGV[1]
+    if name.index( /[^[:alnum:]]/ ) != nil
+      raise WrongInputError
+    end
+  else
+    raise TooManyArgError
   end
 rescue WrongInputError
   puts ' '
@@ -30,6 +33,11 @@ rescue WrongInputError
 rescue NoMethodError
   puts ' '
   puts Rainbow('Sorry, seems like you are missing something. Please try again!').tomato.bright 
+  puts ' '
+  exit
+rescue TooManyArgError
+  puts ' '
+  puts Rainbow('Sorry, seems like you are putting too many arguments in. Please try again!').tomato.bright 
   puts ' '
   exit
 rescue 
@@ -43,6 +51,7 @@ case cli
 when 'start'
   system 'clear'
   puts ' '
+  a = Artii::Base.new :font => 'big'
   puts Rainbow(a.asciify('Welcome to Nimmt !')).lightskyblue.bright
   puts ' '
   ans = prompt_input({ 'Start the game': 1, 'Check out the rules first': 2, 'Checkout score board': 4, 'Exit game': 3 }, 'Shall we start?')
