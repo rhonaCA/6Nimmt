@@ -4,24 +4,6 @@ require_relative '../classes/users'
 require_relative '../classes/players'
 require_relative '../classes/npc'
 
-class Game_setupTest < Test::Unit::TestCase 
-    def test_deck_exist
-        assert_path_exist('deck.json')
-    end
-
-    def test_init_exist
-        assert_path_exist('init_cards.json')
-    end
-
-    def test_npc_exist
-        assert_path_exist('npc_cards.json')
-    end
-
-    def test_player_exist
-        assert_path_exist('player_cards.json')
-    end
-end
-
 class NpcTest < Test::Unit::TestCase 
     def test_check_if_nil_method
         npc = NPC.new

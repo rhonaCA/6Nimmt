@@ -2,15 +2,14 @@
 
 bundle install
 
-echo "Hello! Welcom to the 6 nimmt!"
 echo " "
-echo "This is a fun, interesting card game and I hope you will enjoy 😊"
+echo "Hello! Welcome to the 6 Nimmt!"
 echo " "
-echo "Ready to play?"
+echo "This is a fun, interesting card game and I hope you will enjoy it 😊"
 echo " "
-echo -e "Tell me what you want to do? 'Start' to start the game, 'Rules' to checkout the rules, 'Scoreboard' to checkout the scoreboard. Easy! "
+echo -e "Ready to play? Type in 'Start' to start the game, 'Rules' to checkout the rules, 'Scoreboard' to checkout the scoreboard. Easy! "
 read option
-echo -e "What is your name?"
+echo -e "Awesome! What is your name?"
 read name
 
 ruby main.rb $option $name

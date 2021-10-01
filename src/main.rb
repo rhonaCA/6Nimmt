@@ -10,36 +10,36 @@ require_relative 'classes/errors.rb'
 require_relative 'helpers/methods.rb'
 
 begin
-  if ARGV.length == 0
-    raise NoMethodError
-  end
-  if ARGV.length == 2
+  # if ARGV.length == 0
+  #   raise NoMethodError
+  # end
+  # if ARGV.length == 2
     cli = ARGV[0].downcase
     name = ARGV[1]
     if name.index( /[^[:alnum:]]/ ) != nil
       raise WrongInputError
     end
-  else
-    raise TooManyArgError
-  end
+  # else
+  #   raise TooManyArgError
+  # end
 rescue WrongInputError
   puts ' '
   puts Rainbow('Sorry, name can only contains letters and numbers. Please try again!').tomato.bright 
   puts ' '
   exit
-rescue NoMethodError
-  puts ' '
-  puts Rainbow('Sorry, seems like you are missing something. Please try again!').tomato.bright 
-  puts ' '
-  exit
-rescue TooManyArgError
-  puts ' '
-  puts Rainbow('Sorry, seems like you are putting too many arguments in. Please try again!').tomato.bright 
-  puts ' '
-  exit
+# rescue NoMethodError
+#   puts ' '
+#   puts Rainbow('Sorry, seems like you are missing something. Please try again!').tomato.bright 
+#   puts ' '
+#   exit
+# rescue TooManyArgError
+#   puts ' '
+#   puts Rainbow('Sorry, seems like you are putting too many arguments in. Please try again!').tomato.bright 
+#   puts ' '
+#   exit
 rescue 
   puts ' '
-  puts Rainbow('Sorry, name can only contains letters and numbers. Please try again!').tomato.bright 
+  puts Rainbow('Sorry, something went wrong. Please try again!').tomato.bright 
   puts ' '
   exit
 end
@@ -72,12 +72,15 @@ else
   if try_again == 'y'
     puts "What would you like to do? 'Start' to start the game, 'Rules' to checkout the rules, 'Scoreboard' to checkout the scoreboard. Easy! "
     cli = STDIN.gets.chomp.downcase
-  else
+  elsif try_again == 'n'
     raise WrongOptionError
+  else
+    puts 'Wrong option, do you want to try it again? (Y/N)'
+    try_again = STDIN.gets.chomp.downcase
   end
   rescue WrongOptionError
   puts ' '
-  puts Rainbow('Byebye, hope I will see you soon!').tomato.bright 
+  puts Rainbow('Byebye, hope I will see you again!').tomato.bright 
   puts ' '
   exit
   end
