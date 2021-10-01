@@ -9,10 +9,6 @@ require_relative 'classes/game_setup.rb'
 require_relative 'classes/errors.rb'
 require_relative 'helpers/methods.rb'
 
-# include Output::Users
-
-
-
 begin
   if ARGV.length == 0
     raise NoMethodError
@@ -48,6 +44,7 @@ rescue
   exit
 end
 
+loop do
 case cli
 when 'start'
   system 'clear'
@@ -55,7 +52,7 @@ when 'start'
   a = Artii::Base.new :font => 'big'
   puts Rainbow(a.asciify('Welcome to Nimmt !')).lightskyblue.bright
   puts ' '
-  ans = prompt_input({ 'Start the game': 1, 'Check out the rules first': 2, 'Checkout score board': 4, 'Exit game': 3 }, 'Shall we start?')
+  ans = prompt_input({ 'Start the game': 1, 'Check out the rules first': 2, 'Checkout scoreboard': 4, 'Exit game': 3 }, 'Shall we start?')
   game_round(ans, name)
 when 'rules'
   show_rules_page
@@ -69,5 +66,20 @@ when 'scoreboard'
   ans = prompt_input({ 'Yes I am ready!': 1, 'Check out the rules first': 2, 'Exit game': 3 }, 'Ready to play the game?')
   game_round(ans, name)
 else
-  puts 'Wrong option, exit now and please try again!'
+  puts 'Wrong option, do you want to try it again? (Y/N)'
+  try_again = STDIN.gets.chomp.downcase
+  begin
+  if try_again == 'y'
+    puts "What would you like to do? 'Start' to start the game, 'Rules' to checkout the rules, 'Scoreboard' to checkout the scoreboard. Easy! "
+    cli = STDIN.gets.chomp.downcase
+  else
+    raise WrongOptionError
+  end
+  rescue WrongOptionError
+  puts ' '
+  puts Rainbow('Byebye, hope I will see you soon!').tomato.bright 
+  puts ' '
+  exit
+  end
+end
 end
