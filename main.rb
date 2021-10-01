@@ -1,6 +1,7 @@
 require 'json'
 require 'csv'
 require 'tty-prompt'
+require 'tty-box'
 require 'rainbow'
 require 'artii'
 

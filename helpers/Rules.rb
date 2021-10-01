@@ -1,4 +1,5 @@
     def show_rules_page
+
         puts ' '
         a = Artii::Base.new :font => 'small'
         puts Rainbow(a.asciify('6 Nimmt! Rules')).bright.aqua
@@ -20,17 +21,39 @@
         puts ' '
         puts 'At each turn, you can select a card to play by using ↑ / ↓ keys. After you select a card, depend whose card is smaller (you or NPC), that player will first put their card at the end of one of the 4 rows base on below rules: '
         puts ' '
-        puts Rainbow('Rule No. 1: Ascending Order').seagreen.underline
-        puts 'The number of the card that is added to a row must be higher than the number of the current last card in that row.'
         puts ' '
-        puts Rainbow('Rule No. 2: Small Difference').seagreen.underline
-        puts 'A card must always be added to the row with the smallest possible difference between the current last card and the new one.'
+        box = TTY::Box.frame(width: 150, height: 5, title: {top_left: " RULE NO. 1: Ascending Order "}) do 
+    "
+    The number of the card that is added to a row must be higher than the number of the current last card in that row.
+    "
+        end
+        print box
         puts ' '
-        puts Rainbow('Rule No. 3: Full Row').seagreen.underline
-        puts 'A row with 5 cards in it means the row is full. If Rule No. 2 would put a sixth card in such a row, the player who played that card must take all five cards of the full row. Their card then becomes the first in the new row.'
+        box = TTY::Box.frame(width: 150, height: 5, title: {top_left: " RULE NO. 2: Small Difference "}) do 
+    "
+    A card must always be added to the row with the smallest possible difference between the current last card and the new one.
+    "
+        end
+        print box
         puts ' '
-        puts Rainbow('Rule No. 4: Lowest Card').seagreen.underline
-        puts 'If a player plays a card whose number is so low that it does not fit into any row, they must pick up all cards of a row of their choice. Their card then becomes the first card of the new row. # Usually player will choose the row that will score them the fewest cattle heads.'
+        box = TTY::Box.frame(width: 150, height: 7, title: {top_left: " RULE NO. 3: Full Row "}) do 
+    "
+    A row with 5 cards in it means the row is full. If RULE NO. 2 would put a sixth card in such a row, the player who played that card must 
+    
+    take all five cards of the full row. Their card then becomes the first in the new row.
+    "
+        end
+        print box
+        puts ' '
+        box = TTY::Box.frame(width: 150, height: 7, title: {top_left: " RULE NO. 4: Lowest Card "}) do 
+    "
+    If a player plays a card whose number is so low that it does not fit into any row, they must pick up all cards of a row of their choice. 
+    
+    Their card then becomes the first card of the new row. # Usually player will choose the row that will score them the fewest cattle heads.
+    "
+        end
+        print box
+        puts ' '
         puts ' '
         puts 'At the end of each turn, you will need to select a new card to play, this is repeated for 10 turns until all the cards in your hand are played.'
         puts ' '
