@@ -7,16 +7,16 @@ This game has 104 cards, each contains a number and 1 to 7 cattle heads icons th
 
 # How to play
 
-## **Goal of the game**
+### **Goal of the game**
 Try not to get any cards as it will add up the penalty points.
 
 
-## **Gameplay**
+### **Gameplay**
 Hi player, you are playing with 1 NPC in this game. Both of you will have 10 cards to start with each round. You will see 4 initial cards placed vertically on the screen and your own cards that have been arranged in ascending order. 
 
 At each turn, you can select a card to play by using ↑ / ↓ keys. After you selected a card, depending on whose card is smaller (you or NPC), that player will put their card at the end of one of the 4 rows first based on below rules:
 
-## **Rule No. 1: Ascending Order**
+### **Rule No. 1: Ascending Order**
 
 The number of the card that is added to a row must be higher than the number of the current last card in that row.
 
@@ -33,7 +33,7 @@ Card 103: 1 🐮
 Card 91: 1 🐮
 ```
 
-## **- Rule No. 2: Small Difference**
+### **- Rule No. 2: Small Difference**
 
 A card must always be added to the row with the smallest possible difference between the current last card and the new one.
 
@@ -50,7 +50,7 @@ Card 91: 1 🐮
  
 ```
 
-## **- Rule No. 3: Full Row**
+### **- Rule No. 3: Full Row**
 
 A row with 5 cards in it means the row is full. If Rule No. 2 would put a sixth card in such a row, the player who played that card must take all five cards of the full row. Their card then becomes the first in the new row.
 
@@ -93,7 +93,7 @@ NPC has 0 🐮
 
 ```
 
-## **- Rule No. 4: Lowest Card**
+### **- Rule No. 4: Lowest Card**
 
 If a player plays a card whose number is so low that it does not fit into any row, they must pick up all cards of a row of their choice. Their card then becomes the first card of the new row. *** **Usually player will choose the row that will score them the fewest cattle heads.** ***
 
@@ -145,14 +145,14 @@ NPC has 0 🐮
 At the end of each turn, you will need to select a new card to play, this is repeated for 10 turns until all the cards in your hand are played.
 
 
-## **When the game ends?**
+### **When the game ends?**
 After 10 turns, the game will count the cattle heads on the cards gathered during the round, keep score of each player and a new hand will start.
 
 The game will end when you or NPC collect a total of 66 or more cattle heads. Whoever has collected the fewest cattle heads is the winner!
 
 Winner’s name and score will be kept in the scoreboard.
 
-## **Ready to play?**
+### **Ready to play?**
 <br>
 
 # To install the application
@@ -207,4 +207,4 @@ This game is using `tty-prompt` for player to select their choices. Although thi
 
 This game is built on a M1 Apple Macbooks so any M1 users should be able to run it without any problem.
 
-# Enjoy! ☺️
+## Enjoy! ☺️
