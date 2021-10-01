@@ -2,6 +2,7 @@
 
 bundle install
 
+clear
 echo " "
 echo "Hello! Welcome to the 6 Nimmt!"
 echo " "
