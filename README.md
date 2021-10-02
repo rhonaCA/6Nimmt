@@ -201,7 +201,7 @@ Below are the dependencies required by running the game. All of them will be dow
 **<li>TestUnit</li>** - For unit tests.
 
 # System/ hardware requirement
-Please ensure your terminal's size is at minimum `80(height) * 45(width)` to have a better user experience.
+Please ensure your terminal's size is at minimum `110x45` to have a better user experience.
 
 This game is using `tty-prompt` for player to select their choices. Although this gem does working on Windows, the `select` feature may not work on Window when run from Git Bash. If you have any issues when playing this game, please see [here](https://github.com/piotrmurach/tty-prompt#windows-support) for more details and fixes. 
 
