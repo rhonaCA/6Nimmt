@@ -190,15 +190,19 @@ This game is developed in Ruby and requires Ruby installed to run. Please check 
 
 Below are the dependencies required by running the game. All of them will be downloaded and installed for you when you run the game in script file.
 
-**<li>Tty-prompt</li>** ~> 0.23.1
+**- Tty-prompt** ~> 0.23.1
 <br>
-**<li>Tty-box</li>** ~> 0.7.0
 <br>
-**<li>Rainbow</li>** ~> 3.0
+**- Tty-box** ~> 0.7.0
 <br>
-**<li>Artii</li>** ~> 2.1
 <br>
-**<li>TestUnit</li>** - For unit tests.
+**- Rainbow** ~> 3.0
+<br>
+<br>
+**- Artii** ~> 2.1
+<br>
+<br>
+**- TestUnit** - For unit tests.
 
 # System/ hardware requirement
 Please ensure your terminal's size is at minimum `110x45` to have a better user experience.
