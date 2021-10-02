@@ -18,6 +18,8 @@ penalty points that are totalled up at the end of each round. Game will continue
         puts ' '
         puts 'Try not to get any cards as it will add up the penalty points.'
         puts ' '
+        puts "Press enter to the next part..."
+        STDIN.gets
         puts ' '
         puts Rainbow('GAMEPLAY').bright.lemonchiffon.underline
         puts ' '
@@ -29,6 +31,8 @@ in ascending order.'
 is smaller (you or NPC), that player will first put their card at the end of one of the 4 rows base on 
 below rules: '
         puts ' '
+        puts "Press enter to the next part..."
+        STDIN.gets
         puts ' '
         box = TTY::Box.frame(width: 80, height: 6, title: {top_left: " RULE NO. 1: Ascending Order "}) do 
     "
@@ -45,6 +49,9 @@ below rules: '
     "
         end
         print box
+        puts ' '
+        puts "Press enter to the next part..."
+        STDIN.gets
         puts ' '
         box = TTY::Box.frame(width: 80, height: 8, title: {top_left: " RULE NO. 3: Full Row "}) do 
     "
@@ -71,6 +78,8 @@ below rules: '
         puts 'At the end of each turn, you will need to select a new card to play, this is repeated for 10 turns until all 
 the cards in your hand are played.'
         puts ' '
+        puts "Press enter to the next part..."
+        STDIN.gets
         puts ' '
         puts Rainbow('WHEN THE GAME ENDS?').bright.lemonchiffon.underline
         puts ' '

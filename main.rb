@@ -12,10 +12,12 @@ require_relative 'helpers/methods'
 begin
     cli = ARGV[0].downcase
     name = ARGV[1]
-    if name.index( /[^[:alnum:]]/ ) != nil
+    if name.to_s.empty? == true
+      raise WrongInputError
+    elsif name.index( /[^[:alnum:]]/ ) != nil 
       raise WrongInputError
     end
-rescue WrongInputError
+  rescue WrongInputError
   puts ' '
   puts Rainbow('Sorry, name can only contains letters and numbers. Please try again!').tomato.bright 
   puts ' '
@@ -39,7 +41,7 @@ when 'start'
   game_round(ans, name)
 when 'rules'
   show_rules_page
-  ans = prompt_input({ 'Yes I am ready!': 1, 'Exit game': 3}, 'Ready to play the game?')
+  ans = prompt_input({ 'Yes I am ready!': 1, 'Check out the rules again': 2, 'Exit game': 3}, 'Ready to play the game?')
   game_round(ans, name)
   system 'clear'
 when 'scoreboard'

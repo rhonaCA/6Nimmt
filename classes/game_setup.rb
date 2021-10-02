@@ -18,7 +18,7 @@ def game_round(ans, name)
       system 'clear'
     when 2
       show_rules_page
-      ans = prompt_input({ 'Yes I am ready!': 1, 'Exit game': 3}, 'Ready to play the game?')
+      ans = prompt_input({ 'Yes I am ready!': 1, 'Check out the rules again': 2, 'Exit game': 3}, 'Ready to play the game?')
       system 'clear'
     when 4
       system 'clear'
@@ -101,9 +101,11 @@ def start_game(name)
         game_over(name)
       end
       while card_dispose == 0
-        show_rules_page
-        ans = prompt_input({ 'Yes I am ready!': 1, 'Exit Game': 3 }, 'Ready to resume the game?')
-        if ans == 3
+        show_rules_page()
+        ans = prompt_input({ 'Yes I am ready!': 1, 'Check out the rules again': 2, 'Exit Game': 3 }, 'Ready to resume the game?')
+        if ans == 2
+          show_rules_page()
+        elsif ans == 3
           game_over(name)
         end
         system "clear"

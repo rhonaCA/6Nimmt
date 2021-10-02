@@ -177,10 +177,12 @@ class Users
           init_row = prompt_question()
           # If player choose to check the rules page
           while init_row == 5
-            show_rules_page
-            ans = prompt_input({ 'Yes I am ready!': 1, 'Exit Game': 3 }, 'Ready to resume the game?')
+            show_rules_page()
+            ans = prompt_input({ 'Yes I am ready!': 1, 'Check out the rules again': 2, 'Exit Game': 3 }, 'Ready to resume the game?')
             # If player choose to exit game
-            if ans == 3
+            if ans == 2
+              show_rules_page()
+            elsif ans == 3
               game_over(name)
             end
             system 'clear'
