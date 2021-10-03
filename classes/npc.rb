@@ -14,7 +14,7 @@ class NPC < Users
     def get_num(arr)
         case rand(100) + 1
         when 1..5
-            arr[0][:npc_card]
+            check_if_nil(arr,0)
         when 6..65
             check_if_nil(arr,1)
         when 66..100
