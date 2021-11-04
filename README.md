@@ -153,7 +153,8 @@ The game will end when you or NPC collect a total of 66 or more cattle heads. Wh
 Winner’s name and score will be kept in the scoreboard.
 
 ### **Ready to play?**
-<br>
+
+This game is developed in Ruby and requires Ruby installed to run. Please check out [here](https://www.ruby-lang.org/en/downloads/) to find instructions to download and install Ruby for your operating system.
 
 # To install the application
 
@@ -172,7 +173,7 @@ cd Downloads/TanNaLam_T1A3_6Nimmt-main/
 ./run_game.sh
 ```
 4. This script file will download and install all dependencies that are needed for this game. 
-5. After all dependencies are installed, this script file will prompt you to choose a option and input your name. 
+5. After all dependencies are installed, this script file will prompt you to choose a option. 
 ```
 Hello! Welcome to the 6 Nimmt!
  
@@ -180,13 +181,12 @@ This is a fun, interesting card game and I hope you will enjoy it 😊
  
 Ready to play? Type in 'Start' to start the game, 'Rules' to checkout the rules, 'Scoreboard' to checkout the scoreboard. Easy! 
 ```
-Name can only contains letters and numbers.
+And ask for your name. Please be awared can only contains letters and numbers.
 ```
 Awesome! What is your name?
 ```
 
 # Dependencies
-This game is developed in Ruby and requires Ruby installed to run. Please check out [here](https://www.ruby-lang.org/en/downloads/) to find instructions to download and install Ruby for your operating system.
 
 Below are the dependencies required by running the game. All of them will be downloaded and installed for you when you run the game in script file.
 
